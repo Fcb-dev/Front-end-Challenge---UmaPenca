@@ -1,0 +1,13 @@
+node_modules/
+dist/
+storybook-static/
+coverage/
+test-results/
+playwright-report/
+.env
+.env.*.local
+.vercel/
+tmp/
+*.log
+*.tsbuildinfo
+.tokensave/
