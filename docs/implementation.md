@@ -19,3 +19,13 @@ Cada etapa agrupa uma entrega verificável. O commit usa `tipo(escopo): resumo` 
 - API Express de catálogo, detalhe e saúde; respostas 404 em JSON.
 - Regras de enriquecimento e limitações documentadas em `docs/data.md`.
 - Validação: testes de parsing/adapter e API HTTP, tipos e lint; coleta real de duas páginas.
+
+## 03 — Catálogo editorial (`feat(catalog)`)
+
+- Identidade creme/carvão/framboesa, cabeçalho, manifesto e layout responsivo.
+- Catálogo HTTP com cache de sessão e deduplicação de requisições.
+- Filtros combináveis por tipo/cor refletidos na URL e no histórico do navegador.
+- Cards com imagens otimizadas, lazy loading, cores e preços em BRL.
+- Estados de carregamento, erro recuperável, lista vazia e imagem indisponível.
+- Router com rotas de catálogo, produto e página inexistente; detalhe completo na etapa seguinte.
+- Validação: testes de filtros e imagens, lint, tipos e build.

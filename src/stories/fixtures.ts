@@ -1,0 +1,43 @@
+import type { Product } from '../../shared/catalog';
+export const product: Product = {
+  id: 'demo',
+  name: 'Camiseta Um mundo de ideias',
+  description: 'Uma peça para levar suas ideias por aí.',
+  type: 'Camiseta',
+  creator: 'Estúdio independente',
+  model: 'Regular',
+  image: '/storybook-product.svg',
+  images: ['/storybook-product.svg'],
+  priceCents: 5990,
+  sourceUrl: 'https://umapenca.com/loja/',
+  enrichedFields: [],
+  variants: [
+    {
+      id: 'preto-p',
+      color: 'Preto',
+      colorHex: '#22211f',
+      size: 'P',
+      priceCents: 5990,
+      image: '/storybook-product.svg',
+      available: true,
+    },
+    {
+      id: 'preto-m',
+      color: 'Preto',
+      colorHex: '#22211f',
+      size: 'M',
+      priceCents: 5990,
+      image: '/storybook-product.svg',
+      available: true,
+    },
+    {
+      id: 'areia-p',
+      color: 'Areia',
+      colorHex: '#d5c4a8',
+      size: 'P',
+      priceCents: 6290,
+      image: '/storybook-product.svg',
+      available: true,
+    },
+  ],
+};
