@@ -10,3 +10,12 @@ Cada etapa agrupa uma entrega verificável. O commit usa `tipo(escopo): resumo` 
 - Scripts de desenvolvimento, API, qualidade, build e documentação.
 - Estrutura de Atomic Design iniciada por componentes coesos, expandida conforme as funcionalidades.
 - Validação: lint, tipos, build da aplicação e build do Storybook.
+
+## 02 — Coleta e API (`feat(data)`)
+
+- Parser de JSON embutido no HTML público, sem executar scripts externos.
+- Coleta limitada, sequencial e rastreável com seed versionado.
+- Adapter de preços, modelos, cores, tamanhos e disponibilidade.
+- API Express de catálogo, detalhe e saúde; respostas 404 em JSON.
+- Regras de enriquecimento e limitações documentadas em `docs/data.md`.
+- Validação: testes de parsing/adapter e API HTTP, tipos e lint; coleta real de duas páginas.
