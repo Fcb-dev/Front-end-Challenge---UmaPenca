@@ -29,3 +29,13 @@ Cada etapa agrupa uma entrega verificável. O commit usa `tipo(escopo): resumo` 
 - Estados de carregamento, erro recuperável, lista vazia e imagem indisponível.
 - Router com rotas de catálogo, produto e página inexistente; detalhe completo na etapa seguinte.
 - Validação: testes de filtros e imagens, lint, tipos e build.
+
+## 04 — Produto e sacola (`feat(shop)`)
+
+- Produto com URL direta, carregamento, recuperação de erro e tratamento de 404.
+- Seleção de cor/tamanho respeita combinações reais e bloqueia adição incompleta.
+- Sacola global com variantes separadas, quantidades, remoção e subtotal em centavos.
+- Persistência versionada de IDs/quantidades e revalidação de preços/disponibilidade na API.
+- Diálogo nativo com foco modal, Escape, fechamento externo e retorno de foco.
+- Stories de produto, seletores e estados da sacola; compatibilidade de VTU 1 documentada no teste.
+- Validação: 16 testes unitários/integração e cenários de navegador desktop/mobile, além dos builds.

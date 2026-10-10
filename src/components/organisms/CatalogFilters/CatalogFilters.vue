@@ -1,20 +1,34 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import AppIcon from '../../atoms/AppIcon/AppIcon.vue';
-defineProps<{ types: string[]; colors: string[]; type: string; color: string; count: number }>();
-defineEmits<{
+const props = defineProps<{
+  types: string[];
+  colors: string[];
+  type: string;
+  color: string;
+  count: number;
+}>();
+const emit = defineEmits<{
   (event: 'change', key: 'tipo' | 'cor', value: string): void;
   (event: 'clear'): void;
 }>();
 const expanded = ref(false);
-function value(event: Event) {
-  return (event.target as HTMLSelectElement).value;
-}
+// v-model reaplica a seleção quando as opções chegam da API após a URL inicial.
+const selectedType = computed({
+  get: () => props.type,
+  set: (value: string) => emit('change', 'tipo', value),
+});
+const selectedColor = computed({
+  get: () => props.color,
+  set: (value: string) => emit('change', 'cor', value),
+});
 </script>
 <template>
   <section class="filters" aria-label="Filtros de produtos">
     <div class="flex items-center justify-between gap-4">
-      <p class="text-xs text-stone-600" aria-live="polite">{{ count }} peças para descobrir</p>
+      <p class="text-xs text-stone-600" aria-live="polite">
+        {{ count }} {{ count === 1 ? 'peça' : 'peças' }} para descobrir
+      </p>
       <button
         class="flex min-h-[44px] items-center gap-2 text-sm md:hidden"
         :aria-expanded="expanded"
@@ -27,14 +41,14 @@ function value(event: Event) {
     <div id="filter-controls" class="filter-controls" :class="{ expanded }">
       <label
         ><span class="sr-only">Tipo de produto</span
-        ><select :value="type" @change="$emit('change', 'tipo', value($event))">
+        ><select v-model="selectedType" aria-label="Tipo de produto">
           <option value="">Todos os produtos</option>
           <option v-for="item in types" :key="item" :value="item">{{ item }}</option>
         </select></label
       >
       <label
         ><span class="sr-only">Cor</span
-        ><select :value="color" @change="$emit('change', 'cor', value($event))">
+        ><select v-model="selectedColor" aria-label="Cor">
           <option value="">Todas as cores</option>
           <option v-for="item in colors" :key="item" :value="item">{{ item }}</option>
         </select></label

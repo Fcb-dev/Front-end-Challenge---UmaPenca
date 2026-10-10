@@ -99,7 +99,7 @@ onMounted(load);
   justify-content: space-between;
   align-items: center;
   gap: 40px;
-  padding: 64px 0 72px;
+  padding: 44px 0 48px;
 }
 .hero-copy h1 {
   font-family: 'DM Serif Display', serif;
