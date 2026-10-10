@@ -60,3 +60,12 @@ Cada etapa agrupa uma entrega verificável. O commit usa `tipo(escopo): resumo` 
 - Correção de inicialização da API quando executada com pipes no Windows, reproduzida ao abrir a prévia final.
 - O comando E2E continua usando API sem watch e verificando a saúde dos dois serviços.
 - Validação: inicialização via `npm run dev` e consulta HTTP da API através do proxy Vite.
+
+## 07 — Movimento e contornos (`feat(ui)`)
+
+- Sacola com entrada lateral de 360 ms, saída de 280 ms e transição do backdrop.
+- Fechamento preserva o modal e bloqueio de rolagem até terminar a animação, restaurando o foco depois.
+- Transições interrompidas são canceladas ao alternar o estado ou desmontar o componente.
+- Cards com contorno marrom e espessura interna animada no hover/foco, sem deslocamento do layout.
+- Preferência de movimento reduzido respeitada na sacola e nos cards.
+- Validação: lint, tipos/build e 12 cenários E2E em desktop, celular e tablet; revisão visual dos contornos.

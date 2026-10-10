@@ -20,23 +20,49 @@ const emit = defineEmits<{
   (event: 'retry'): void;
 }>();
 const dialog = ref<HTMLDialogElement | null>(null);
+const closing = ref(false);
+let motion: Animation | null = null;
 let previousFocus: HTMLElement | null = null;
 let previousOverflow = '';
 watch(
   () => props.open,
   async (open) => {
     await nextTick();
-    if (!dialog.value) return;
-    if (open && !dialog.value.open) {
+    const element = dialog.value;
+    if (!element || open !== props.open) return;
+    const wasOpen = element.open;
+    const from = wasOpen ? getComputedStyle(element).transform : 'translateX(100%)';
+    motion?.cancel();
+    closing.value = !open;
+    if (open && !wasOpen) {
       previousFocus = document.activeElement as HTMLElement;
       previousOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
-      dialog.value.showModal();
-    } else if (!open && dialog.value.open) {
-      dialog.value.close();
+      element.showModal();
+    }
+    if (!element.open) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const animation = element.animate(
+      [{ transform: from }, { transform: open ? 'translateX(0)' : 'translateX(100%)' }],
+      {
+        duration: reduced ? 0 : open ? 360 : 280,
+        easing: 'cubic-bezier(.22, 1, .36, 1)',
+        fill: 'forwards',
+      },
+    );
+    motion = animation;
+    try {
+      await animation.finished;
+    } catch {
+      return; // A new interaction or unmount superseded this transition.
+    }
+    if (!props.open) {
+      element.close();
       document.body.style.overflow = previousOverflow;
       if (previousFocus?.isConnected) previousFocus.focus();
     }
+    animation.cancel();
+    motion = null;
   },
   { immediate: true },
 );
@@ -52,6 +78,7 @@ function outside(event: MouseEvent) {
     emit('close');
 }
 onBeforeUnmount(() => {
+  motion?.cancel();
   if (dialog.value?.open) document.body.style.overflow = previousOverflow;
 });
 </script>
@@ -59,6 +86,7 @@ onBeforeUnmount(() => {
   <dialog
     ref="dialog"
     class="cart-drawer"
+    :class="{ 'is-closing': closing }"
     aria-labelledby="cart-title"
     @cancel.prevent="$emit('close')"
     @click="outside"
@@ -143,6 +171,32 @@ onBeforeUnmount(() => {
 .cart-drawer::backdrop {
   background: #22211f80;
   backdrop-filter: blur(2px);
+  animation: backdrop-in 360ms ease both;
+}
+.cart-drawer.is-closing::backdrop {
+  animation: backdrop-out 280ms ease both;
+}
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes backdrop-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cart-drawer::backdrop,
+  .cart-drawer.is-closing::backdrop {
+    animation: none;
+  }
 }
 .drawer-layout {
   display: flex;
