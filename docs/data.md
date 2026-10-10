@@ -14,7 +14,7 @@ Execute `npm run scrape` para duas páginas ou `npm run scrape -- --pages=1`. O 
 - Disponibilidade real respeita estoque virtual ou quantidade positiva. Não se infere estoque físico.
 - Imagens e cores de variantes são preservadas quando disponíveis.
 - Quando faltam variantes: cores do catálogo; se ausentes, “Única”. Adultos recebem P/M/G/GG, infantis 4/6/8/10/12, acessórios sem tamanho. São opções demonstrativas determinísticas, identificadas em `enrichedFields`.
-- Descrição ausente recebe aviso explícito. Não se inventam propriedades comerciais.
+- Descrição individual tem prioridade; quando ausente, o campo `info` fornece a descrição real do modelo. Se ambos faltarem, recebe aviso explícito. Não se inventam propriedades comerciais.
 - Falhas por produto ficam em `skipped`; data, páginas e URL da coleta permanecem no seed.
 
 ## API

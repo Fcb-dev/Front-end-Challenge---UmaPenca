@@ -11,6 +11,11 @@ const raw = {
   type: { name: 'Camiseta' },
 };
 describe('coleta e normalização', () => {
+  it('usa informações reais do modelo quando a descrição individual está ausente', () => {
+    const result = adaptProduct(raw, { description: null, info: '<p>Moletom com <strong>capuz</strong>.</p>' });
+    expect(result.description).toBe('Moletom com capuz.');
+    expect(result.enrichedFields).not.toContain('description');
+  });
   it('extrai JSON com chaves em strings sem executar código posterior', () => {
     expect(
       extractAssignedJson(

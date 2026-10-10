@@ -39,3 +39,17 @@ Cada etapa agrupa uma entrega verificável. O commit usa `tipo(escopo): resumo` 
 - Diálogo nativo com foco modal, Escape, fechamento externo e retorno de foco.
 - Stories de produto, seletores e estados da sacola; compatibilidade de VTU 1 documentada no teste.
 - Validação: 16 testes unitários/integração e cenários de navegador desktop/mobile, além dos builds.
+
+## 05 — Entrega reproduzível (`chore(delivery)`)
+
+- README completo: requisitos, comandos, ambiente, arquitetura, dados, trade-offs e limitações.
+- CI com instalação limpa, lint, tipos, testes, builds e cenários de navegador.
+- Documentação de todos os componentes reutilizáveis e template, com fixtures isoladas.
+- Correções compatíveis de dependências e registro dos alertas da stack legada.
+- Configuração Vercel para frontend/API na mesma origem e Storybook em `/storybook/`.
+- Variáveis locais carregadas na API e proxy, favicon e normalização de finais de linha.
+- Revisão do adapter para aproveitar descrições reais do campo `info` e atualização do seed.
+- E2E aguarda API e frontend separadamente; API sem watch evita falhas de inicialização no runner.
+- Validação: instalação limpa com `npm ci`, lint, tipos, 17 testes unitários/integração, builds da aplicação e Storybook e 12 cenários E2E em desktop, celular e tablet.
+- Revisão visual dos três tamanhos e verificação do Storybook empacotado em `/storybook/`.
+- Deploy externo preparado; publicação e links dependem da conta/projeto da hospedagem.

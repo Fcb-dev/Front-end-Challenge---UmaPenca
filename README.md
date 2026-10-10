@@ -1,38 +1,145 @@
 # Penca — ideias que vestem
 
-Mini loja do teste técnico Uma Penca. Vue 2.7, TypeScript e Atomic Design, com identidade editorial e documentação de componentes em Storybook.
+Mini loja do teste técnico Uma Penca: catálogo real coletado por scraping, filtros combináveis, página de produto e sacola lateral persistente. Identidade editorial autoral, responsiva, com Atomic Design e Storybook.
 
-## Desenvolvimento
+## Rodar em uma máquina limpa
 
-Use Node 22 (Node 24 também aceito) e npm. As versões exatas estão no `package.json` e `package-lock.json`.
+Pré-requisitos: **Node 22** (arquivo `.nvmrc`) ou Node 24 e npm. Não é necessário banco de dados, conta de serviço ou executar scraping para iniciar: o seed já está versionado.
 
 ```sh
+git clone https://github.com/Fcb-dev/Front-end-Challenge---UmaPenca.git
+cd Front-end-Challenge---UmaPenca
 npm ci
 npm run dev
 ```
 
-Frontend: http://127.0.0.1:5173. API: http://127.0.0.1:3001/api/health.
+- Loja: http://127.0.0.1:5173
+- API: http://127.0.0.1:3001/api/products
+- Saúde: http://127.0.0.1:3001/api/health
 
-```sh
-npm run lint
-npm run typecheck
-npm test
-npm run build
-npm run storybook
-npm run build-storybook
+O comando inicia Vite e Express juntos. Encerre com Ctrl+C.
+
+## Comandos
+
+| Comando                              | Resultado                                               |
+| ------------------------------------ | ------------------------------------------------------- |
+| `npm run dev`                        | Frontend e API em desenvolvimento                       |
+| `npm run build`                      | Verifica tipos e gera a aplicação em `dist/`            |
+| `npm start`                          | Inicia somente a API do seed                            |
+| `npm run preview`                    | Serve o build local; mantenha a API em outro terminal   |
+| `npm run storybook`                  | Documentação interativa em http://localhost:6006        |
+| `npm run build-storybook`            | Gera a documentação estática em `storybook-static/`     |
+| `npm run build:deploy`               | Gera app e documentação em `dist/storybook/`            |
+| `npm run lint` / `npm run typecheck` | Qualidade e tipos, incluindo SFCs                       |
+| `npm test`                           | Testes de regras, componentes, parser e API HTTP        |
+| `npm run test:e2e`                   | Fluxos de navegador; inicia os servidores se necessário |
+| `npm run check`                      | Lint, tipos, testes e ambos os builds                   |
+| `npm run scrape -- --pages=2`        | Atualiza o snapshot da fonte, respeitando os limites    |
+
+Antes do primeiro E2E: `npx playwright install chromium`. Em Linux/CI, use `npx playwright install --with-deps chromium`.
+
+## Ambiente
+
+A configuração padrão dispensa `.env`. Se necessário, copie `.env.example` para `.env`.
+
+| Variável       | Padrão | Uso                                                  |
+| -------------- | ------ | ---------------------------------------------------- |
+| `PORT`         | `3001` | Porta da API local e destino do proxy Vite           |
+| `VITE_API_URL` | `/api` | Base HTTP consumida pelo frontend, definida no build |
+
+Não há segredos no projeto. O deploy proposto mantém aplicação e API na mesma origem.
+
+## Stack e compatibilidade
+
+- Vue **2.7.16**, Composition API nativa, Vue Router **3.6.5**.
+- TypeScript **5.3.3**, vue-tsc **1.8.27**, Vite **5.4.21**.
+- Tailwind **3.4.17**, Inter e DM Serif Display locais.
+- Storybook **7.6.24**, última linha utilizada com suporte ao Vue 2.
+- Vitest **3.2.6**, Vue Test Utils **1.3.6**, Playwright **1.56.1**.
+- Express **5.1.0**, Cheerio e tsx na coleta/API.
+
+Versões exatas e transitivas estão no lockfile. Vue 2.7 é uma exigência do teste. Não atualizar isoladamente Vue, Router, Storybook ou Vue Test Utils para suas versões mais recentes: isso rompe a compatibilidade da stack.
+
+## Arquitetura
+
+```text
+src/
+  components/atoms/        elementos básicos e acessíveis
+  components/molecules/    combinações de controles e cards
+  components/organisms/    regiões completas da interface
+  templates/               layout compartilhado
+  pages/                   rotas, carregamento e composição
+  composables/             estado e coordenação
+  domain/                  regras puras e cálculos
+  services/                acesso HTTP e cache
+  router/                  rotas e histórico
+  styles/                  tokens e estilos globais
+shared/                    contratos de produtos e variantes
+scripts/scraping/          coleta, parser e adapter
+server/                    API Express local e fábrica testável
+api/                       entrada serverless para deploy
+data/                      seed com origem e relatório de coleta
+tests/                     integração, componentes e E2E
 ```
 
-`npm run preview` serve o build do frontend; execute `npm start` em outro terminal para a API. `.env.example` documenta a URL da API e a porta; os padrões locais dispensam configuração.
+Atomic Design organiza a interface, mantendo HTTP, persistência e regras fora dos componentes visuais. A documentação de cada componente usa stories adjacentes e fixtures isoladas; a aplicação consome exclusivamente a API.
 
-## Arquitetura e decisões
+A sacola usa reatividade nativa do Vue, com fábrica de estado testável. Persistimos apenas IDs e quantidades; os preços e a disponibilidade são conferidos novamente na API após recarregar. Quantidades vão de 1 a 99; remoção é explícita. Mesma variante soma quantidade; variantes ou produtos diferentes são linhas distintas.
 
-- Interface organizada em atoms, molecules, organisms, templates e pages.
-- Serviços HTTP, regras de domínio e estado permanecem separados da interface.
-- Vue 2.7 é obrigatório no desafio; Storybook 7.6 e Vue Test Utils 1 são as linhas compatíveis.
-- TypeScript 5.3 e vue-tsc 1.8 são fixados juntos para validar SFCs do Vue 2.
-- Tailwind 3 atende à biblioteca CSS exigida; estilos próprios e fontes locais constroem a identidade.
-- Código de apresentação recebe propriedades e emite eventos, permitindo documentação isolada.
+## Dados e API
 
-## Evolução
+O snapshot contém **50 produtos de 9 tipos**, coletados de duas páginas da [vitrine Uma Penca](https://umapenca.com/loja/). Há 22 registros ignorados, com motivos no seed: lojas em domínios externos ou páginas sem a estrutura de detalhe esperada.
 
-Veja [o histórico de implementação](docs/implementation.md) para os tópicos entregues e a validação de cada etapa. A fundação está em implementação; catálogo, coleta, produto e carrinho serão acrescentados nos próximos commits.
+A coleta lê o HTML e extrai JSON estruturado sem executar scripts do site. O intervalo mínimo é 1,1 segundo, com até cinco páginas de listagem. O frontend nunca coleta dados em tempo real. Uma falha que impeça uma coleta válida preserva o seed anterior.
+
+Descrição, cores, tamanhos, disponibilidade e preços vêm dos detalhes quando presentes. Enriquecimento determinístico só é aplicado na ausência dos campos e fica marcado em `enrichedFields`. O catálogo demonstra um modelo por produto, escolhido pela capa. Consulte [as regras completas e contratos](docs/data.md).
+
+| Endpoint                | Resposta                        |
+| ----------------------- | ------------------------------- |
+| `GET /api/products`     | `{ products, collectedAt }`     |
+| `GET /api/products/:id` | Produto ou 404 JSON             |
+| `GET /api/health`       | Estado e quantidade de produtos |
+
+## Experiência e decisões
+
+- Paleta creme, carvão e framboesa, inspirada no protagonismo das fotos e amostras de cor da referência, com composição editorial própria.
+- Tipo e cor se combinam por AND e ficam na query string; recarregar e navegar pelo histórico preserva a busca.
+- Catálogo pequeno filtrado localmente após uma requisição, com cache de sessão e deduplicação.
+- Loading, erro com tentativa, vazio, produto ausente e imagem indisponível têm tratamentos próprios.
+- Produto tem URL direta, seleção obrigatória das variações aplicáveis e imagem/preço da variante.
+- Drawer nativo acessível nas duas páginas, com Escape, foco modal e retorno de foco.
+- Imagens com dimensões explícitas, otimização Imgix e lazy loading abaixo da primeira dobra.
+- Fontes locais; rota de produto carregada separadamente; regras monetárias usam centavos inteiros.
+
+## Verificação
+
+Os testes cobrem parsing, preço brasileiro, enriquecimento, disponibilidade, filtros combinados, regras/persistência da sacola, bloqueio de compra e respostas HTTP. O E2E cobre URL direta, busca compartilhada, histórico, falha e recuperação, variantes, quantidades, subtotal, reload, remoção, 404 e armazenamento corrompido.
+
+A CI em `.github/workflows/quality.yml` executa instalação limpa, verificações, builds e E2E. Relatórios de falhas ficam disponíveis como artefatos da execução. A documentação do Storybook também é compilada, evitando stories quebradas silenciosamente.
+
+## Deploy
+
+Repositório: [Fcb-dev/Front-end-Challenge---UmaPenca](https://github.com/Fcb-dev/Front-end-Challenge---UmaPenca).
+
+A configuração em `vercel.json` prepara **um projeto Vercel** com frontend, API própria e Storybook em `/storybook/`. Essa simplificação substitui os três projetos inicialmente propostos, reduzindo configuração, CORS e dependência de múltiplas URLs.
+
+1. Importar o repositório na Vercel com Node 22.
+2. Usar `npm ci`, build `npm run build:deploy` e saída `dist`.
+3. Manter `VITE_API_URL=/api`; a função em `api/[...path].ts` utiliza o mesmo Express e seed.
+4. Validar `/api/health`, `/produto/431589`, uma URL filtrada e `/storybook/` no endereço publicado.
+5. Registrar os links públicos aqui após a publicação verificada.
+
+**Status:** aplicação e documentação verificadas localmente; publicação externa ainda depende de vincular a conta/projeto de hospedagem. Não há URL pública de deploy confirmada.
+
+## Limitações e próximos passos
+
+- Sem autenticação, checkout, pagamentos, frete ou administração: não fazem parte do escopo.
+- O snapshot não representa estoque/preço em tempo real. Imagens dependem do CDN da fonte e têm fallback visual.
+- Apenas um modelo por produto; uma loja real precisaria modelar também mudanças de modelagem, produção e regras comerciais.
+- O catálogo inteiro é adequado ao volume limitado; com mais dados, mover filtros/paginação para a API.
+- Vue 2 e parte do ecossistema estão fora de manutenção. `npm audit` ainda aponta alertas na cadeia legada; consultar [a avaliação de dependências](docs/dependencies.md). Não foi usado `audit fix --force`, que migraria requisitos obrigatórios.
+- Com mais tempo: ampliar cenários de acessibilidade com leitores de tela, estabelecer regressão visual e validar a publicação em ambiente real.
+
+## Histórico de implementação
+
+Cada commit representa uma etapa funcional ou estrutural, com corpo em tópicos e validações. Veja [o histórico detalhado](docs/implementation.md).

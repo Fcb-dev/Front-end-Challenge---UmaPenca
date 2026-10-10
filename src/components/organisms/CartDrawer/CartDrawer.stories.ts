@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue';
 import CartDrawer from './CartDrawer.vue';
+import BaseButton from '../../atoms/BaseButton/BaseButton.vue';
 import { product } from '../../../stories/fixtures';
 import { resolveCart, subtotal } from '../../../domain/cart';
 const items = resolveCart(
@@ -13,7 +14,14 @@ export default {
   title: 'Organisms/CartDrawer',
   component: CartDrawer,
   tags: ['autodocs'],
-  args: { open: true, items, total: subtotal(items) },
+  args: { open: false, items, total: subtotal(items) },
+  render: (_args, { argTypes }) => ({
+    components: { CartDrawer, BaseButton },
+    props: Object.keys(argTypes),
+    data: () => ({ visible: false }),
+    template:
+      '<div><BaseButton @click="visible = true">Abrir sacola</BaseButton><CartDrawer v-bind="$props" :open="visible" @close="visible = false" /></div>',
+  }),
   argTypes: {
     close: { action: 'close' },
     quantity: { action: 'quantity' },

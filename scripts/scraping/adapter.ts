@@ -82,6 +82,7 @@ export function adaptProduct(listing: RecordData, detail: RecordData = {}): Prod
   const uniqueVariants = Array.from(new Map(variants.map((v) => [v.id, v])).values());
   const description =
     plainText(raw.description) ||
+    plainText(raw.info) ||
     plainText(model.description) ||
     plainText(record(raw.type).description);
   if (!description) enrichedFields.push('description');
