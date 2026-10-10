@@ -53,3 +53,10 @@ Cada etapa agrupa uma entrega verificável. O commit usa `tipo(escopo): resumo` 
 - Validação: instalação limpa com `npm ci`, lint, tipos, 17 testes unitários/integração, builds da aplicação e Storybook e 12 cenários E2E em desktop, celular e tablet.
 - Revisão visual dos três tamanhos e verificação do Storybook empacotado em `/storybook/`.
 - Deploy externo preparado; publicação e links dependem da conta/projeto da hospedagem.
+
+## 06 — Inicialização no Windows (`fix(dev)`)
+
+- Substituído o watch do CLI tsx pelo watch nativo do Node com loader tsx.
+- Correção de inicialização da API quando executada com pipes no Windows, reproduzida ao abrir a prévia final.
+- O comando E2E continua usando API sem watch e verificando a saúde dos dois serviços.
+- Validação: inicialização via `npm run dev` e consulta HTTP da API através do proxy Vite.

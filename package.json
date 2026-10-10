@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "concurrently -k -n api,web \"npm:dev:api\" \"npm:dev:web\"",
     "dev:web": "vite --host 127.0.0.1",
-    "dev:api": "tsx watch server/index.ts",
+    "dev:api": "node --watch --import tsx server/index.ts",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "start": "tsx server/index.ts",
