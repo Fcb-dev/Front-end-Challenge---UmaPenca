@@ -20,7 +20,7 @@ const colors = computed(() =>
         <span class="card-type">{{ product.type }}</span>
         <span class="card-arrow" aria-hidden="true">↗</span>
       </div>
-      <div class="px-3 pb-4 pt-4">
+      <div class="pt-4">
         <p class="mb-2 text-[10px] font-semibold uppercase tracking-[.14em] text-stone-600">
           {{ product.creator }}
         </p>
@@ -45,32 +45,8 @@ const colors = computed(() =>
 <style scoped>
 .product-card-link {
   display: block;
-  position: relative;
-  border: 1px solid #a58b72;
-  transition: box-shadow 280ms ease;
-}
-.product-card-link::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  box-shadow: inset 0 0 0 0 #80634c;
-  transition: box-shadow 280ms ease;
-}
-.product-card-link:focus-visible::after {
-  box-shadow: inset 0 0 0 2px #80634c;
-}
-@media (hover: hover) {
-  .product-card-link:hover::after {
-    box-shadow: inset 0 0 0 2px #80634c;
-  }
-  .product-card-link:hover {
-    box-shadow: 0 5px 18px #80634c14;
-  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .product-card-link,
-  .product-card-link::after,
   .card-arrow,
   .product-card-link :deep(img) {
     transition: none !important;

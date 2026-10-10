@@ -69,3 +69,10 @@ Cada etapa agrupa uma entrega verificável. O commit usa `tipo(escopo): resumo` 
 - Cards com contorno marrom e espessura interna animada no hover/foco, sem deslocamento do layout.
 - Preferência de movimento reduzido respeitada na sacola e nos cards.
 - Validação: lint, tipos/build e 12 cenários E2E em desktop, celular e tablet; revisão visual dos contornos.
+
+## 08 — Cards sem bordas (`fix(ui)`)
+
+- Removidos contorno marrom, espessura animada e sombra dos cards a pedido do usuário.
+- Restaurado o espaçamento original dos textos; mantidos hover da imagem e movimento reduzido.
+- Animações de abertura e fechamento da sacola preservadas.
+- Validação: lint do componente e revisão do diff.
