@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import AppIcon from '../../atoms/AppIcon/AppIcon.vue';
+import FilterSelect from '../../molecules/FilterSelect/FilterSelect.vue';
 const props = defineProps<{
   types: string[];
   colors: string[];
@@ -39,20 +40,20 @@ const selectedColor = computed({
       </button>
     </div>
     <div id="filter-controls" class="filter-controls" :class="{ expanded }">
-      <label
-        ><span class="sr-only">Tipo de produto</span
-        ><select v-model="selectedType" aria-label="Tipo de produto">
-          <option value="">Todos os produtos</option>
-          <option v-for="item in types" :key="item" :value="item">{{ item }}</option>
-        </select></label
-      >
-      <label
-        ><span class="sr-only">Cor</span
-        ><select v-model="selectedColor" aria-label="Cor">
-          <option value="">Todas as cores</option>
-          <option v-for="item in colors" :key="item" :value="item">{{ item }}</option>
-        </select></label
-      >
+      <FilterSelect
+        id="filter-type"
+        v-model="selectedType"
+        label="Tipo de produto"
+        placeholder="Todos os produtos"
+        :options="types"
+      />
+      <FilterSelect
+        id="filter-color"
+        v-model="selectedColor"
+        label="Cor"
+        placeholder="Todas as cores"
+        :options="colors"
+      />
       <button
         v-if="type || color"
         class="min-h-[44px] text-xs underline underline-offset-4"
@@ -77,15 +78,6 @@ const selectedColor = computed({
   display: flex;
   gap: 12px;
   align-items: center;
-}
-select {
-  min-height: 44px;
-  border: 1px solid #bdb5a8;
-  background: transparent;
-  padding: 8px 32px 8px 12px;
-  font-size: 12px;
-  border-radius: 3px;
-  max-width: 100%;
 }
 @media (max-width: 767px) {
   .filters {

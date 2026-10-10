@@ -29,12 +29,35 @@ async function showFilters(page: Page) {
   const button = page.getByRole('button', { name: /^Filtrar/ });
   if (await button.isVisible()) await button.click();
 }
+test('dropdown permite seleção por teclado e fecha com Escape e clique externo', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await expect(page.locator('.product-card')).toHaveCount(seed.products.length);
+  await showFilters(page);
+  const type = page.getByRole('combobox', { name: 'Tipo de produto', exact: true });
+  await type.focus();
+  await type.press('Enter');
+  await type.press('m');
+  await type.press('Enter');
+  await expect(type).toHaveText('Moletom');
+  await expect(page).toHaveURL(/tipo=Moletom/);
+  await type.press('Enter');
+  await type.press('Escape');
+  await expect(type).toHaveAttribute('aria-expanded', 'false');
+  await expect(type).toBeFocused();
+  await type.click();
+  await page.getByRole('heading', { name: 'A coleção.', exact: true }).click();
+  await expect(type).toHaveAttribute('aria-expanded', 'false');
+});
 test('filtros combinam, sobrevivem ao reload e respeitam voltar', async ({ page }, info) => {
   await page.goto('/');
   await expect(page.locator('.product-card')).toHaveCount(seed.products.length);
   await showFilters(page);
-  await page.getByLabel('Tipo de produto', { exact: true }).selectOption('Moletom');
-  await page.getByLabel('Cor', { exact: true }).selectOption('Areia');
+  await page.getByRole('combobox', { name: 'Tipo de produto', exact: true }).click();
+  await page.getByRole('option', { name: 'Moletom', exact: true }).click();
+  await page.getByRole('combobox', { name: 'Cor', exact: true }).click();
+  await page.getByRole('option', { name: 'Areia', exact: true }).click();
   await expect(page).toHaveURL(/tipo=Moletom.*cor=Areia/);
   const expected = seed.products.filter(
     (p) => p.type === 'Moletom' && p.variants.some((v) => v.color === 'Areia'),
@@ -42,7 +65,7 @@ test('filtros combinam, sobrevivem ao reload e respeitam voltar', async ({ page 
   await expect(page.locator('.product-card')).toHaveCount(expected);
   await page.reload();
   await showFilters(page);
-  await expect(page.getByLabel('Cor', { exact: true })).toHaveValue('Areia');
+  await expect(page.getByRole('combobox', { name: 'Cor', exact: true })).toHaveText('Areia');
   await page.getByRole('button', { name: 'Limpar filtros' }).click();
   await expect(page.locator('.product-card')).toHaveCount(seed.products.length);
   await page.goBack();

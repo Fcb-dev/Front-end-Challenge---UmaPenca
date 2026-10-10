@@ -90,3 +90,12 @@ Cada etapa agrupa uma entrega verificável. O commit usa `tipo(escopo): resumo` 
 - Entrada, saída e backdrop sincronizados em 450 ms com aceleração e desaceleração suaves.
 - Verificação na própria prévia confirmou posições intermediárias na entrada e saída, mantendo o diálogo aberto até terminar.
 - Regressão atualizada para exigir deslocamento lateral também com movimento reduzido.
+
+## 11 — Filtros com identidade visual (`feat(filters)`)
+
+- Componente reutilizável FilterSelect na camada molecules substitui os selects nativos.
+- Menu creme, contornos discretos, seleção em framboesa, indicador de seleção e seta animada.
+- Navegação por setas, Home/End, busca digitada, Enter, Escape e Tab; fechamento externo e estados ARIA explícitos para Vue 2.
+- Mantidos filtros combinados e persistência na URL; exemplos interativos adicionados ao Storybook.
+- Revisão visual na prévia e cobertura de teclado, clique externo e seleção por mouse nos três tamanhos de tela.
+- Validação: lint, tipos, builds da aplicação e Storybook, 17 testes unitários/integração e 18 cenários E2E.
