@@ -76,3 +76,10 @@ Cada etapa agrupa uma entrega verificável. O commit usa `tipo(escopo): resumo` 
 - Restaurado o espaçamento original dos textos; mantidos hover da imagem e movimento reduzido.
 - Animações de abertura e fechamento da sacola preservadas.
 - Validação: lint do componente e revisão do diff.
+
+## 09 — Transição com movimento reduzido (`fix(cart)`)
+
+- Diagnóstico no navegador da prévia confirmou `prefers-reduced-motion: reduce`, que zerava a duração do carrinho.
+- Substituída a abertura instantânea por fade de 180 ms nesse modo, sem deslocamento lateral; backdrop acompanha a transição.
+- Deslizamento padrão ajustado para 420 ms na entrada e 340 ms na saída.
+- Validação: lint, tipos, 12 cenários E2E existentes e 3 regressões de movimento reduzido, incluindo fechamento diferido e retorno de foco.
