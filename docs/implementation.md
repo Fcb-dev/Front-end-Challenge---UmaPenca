@@ -83,3 +83,10 @@ Cada etapa agrupa uma entrega verificável. O commit usa `tipo(escopo): resumo` 
 - Substituída a abertura instantânea por fade de 180 ms nesse modo, sem deslocamento lateral; backdrop acompanha a transição.
 - Deslizamento padrão ajustado para 420 ms na entrada e 340 ms na saída.
 - Validação: lint, tipos, 12 cenários E2E existentes e 3 regressões de movimento reduzido, incluindo fechamento diferido e retorno de foco.
+
+## 10 — Deslizamento explícito da sacola (`fix(cart)`)
+
+- A pedido do usuário, o carrinho passa a deslizar também quando o navegador informa movimento reduzido; removida a substituição por fade.
+- Entrada, saída e backdrop sincronizados em 450 ms com aceleração e desaceleração suaves.
+- Verificação na própria prévia confirmou posições intermediárias na entrada e saída, mantendo o diálogo aberto até terminar.
+- Regressão atualizada para exigir deslocamento lateral também com movimento reduzido.

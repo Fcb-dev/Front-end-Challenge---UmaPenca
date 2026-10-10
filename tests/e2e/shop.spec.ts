@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import type { CatalogSeed } from '../../shared/catalog';
 
-test('movimento reduzido mantém fade e aguarda a saída antes de fechar', async ({ page }) => {
+test('carrinho desliza mesmo com movimento reduzido e aguarda a saída', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   await page.getByRole('button', { name: 'Abrir sacola', exact: true }).click();
@@ -14,10 +14,10 @@ test('movimento reduzido mantém fade e aguarda a saída antes de fechar', async
     return {
       open: element.hasAttribute('open'),
       duration: animation?.effect?.getTiming().duration,
-      opacity: (animation?.effect as KeyframeEffect)?.getKeyframes().at(-1)?.opacity,
+      transform: (animation?.effect as KeyframeEffect)?.getKeyframes().at(-1)?.transform,
     };
   });
-  expect(transition).toEqual({ open: true, duration: 180, opacity: '0' });
+  expect(transition).toEqual({ open: true, duration: 450, transform: 'translateX(100%)' });
   await expect(drawer).not.toBeVisible();
   await expect(page.getByRole('button', { name: 'Abrir sacola', exact: true })).toBeFocused();
 });

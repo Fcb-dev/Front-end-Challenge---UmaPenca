@@ -32,7 +32,6 @@ watch(
     if (!element || open !== props.open) return;
     const wasOpen = element.open;
     const from = wasOpen ? getComputedStyle(element).transform : 'translateX(100%)';
-    const fromOpacity = wasOpen ? getComputedStyle(element).opacity : '0';
     motion?.cancel();
     closing.value = !open;
     if (open && !wasOpen) {
@@ -42,14 +41,11 @@ watch(
       element.showModal();
     }
     if (!element.open) return;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const animation = element.animate(
-      reduced
-        ? [{ opacity: fromOpacity }, { opacity: open ? '1' : '0' }]
-        : [{ transform: from }, { transform: open ? 'translateX(0)' : 'translateX(100%)' }],
+      [{ transform: from }, { transform: open ? 'translateX(0)' : 'translateX(100%)' }],
       {
-        duration: reduced ? 180 : open ? 420 : 340,
-        easing: 'cubic-bezier(.25, .8, .25, 1)',
+        duration: 450,
+        easing: 'cubic-bezier(.4, 0, .2, 1)',
         fill: 'forwards',
       },
     );
@@ -174,10 +170,10 @@ onBeforeUnmount(() => {
 .cart-drawer::backdrop {
   background: #22211f80;
   backdrop-filter: blur(2px);
-  animation: backdrop-in 420ms ease both;
+  animation: backdrop-in 450ms ease both;
 }
 .cart-drawer.is-closing::backdrop {
-  animation: backdrop-out 340ms ease both;
+  animation: backdrop-out 450ms ease both;
 }
 @keyframes backdrop-in {
   from {
@@ -198,7 +194,7 @@ onBeforeUnmount(() => {
 @media (prefers-reduced-motion: reduce) {
   .cart-drawer::backdrop,
   .cart-drawer.is-closing::backdrop {
-    animation-duration: 180ms !important;
+    animation-duration: 450ms !important;
     backdrop-filter: none;
   }
 }
