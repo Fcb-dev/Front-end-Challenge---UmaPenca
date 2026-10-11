@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance, onMounted } from 'vue';
+import { computed, getCurrentInstance, onMounted, ref } from 'vue';
 import { useCatalog } from '../composables/useCatalog';
 import { useCart } from '../composables/useCart';
 import type { Product } from '../../shared/catalog';
@@ -8,6 +8,7 @@ import { router } from '../router';
 import CatalogFilters from '../components/organisms/CatalogFilters/CatalogFilters.vue';
 import ProductGrid from '../components/organisms/ProductGrid/ProductGrid.vue';
 import StatusPanel from '../components/molecules/StatusPanel/StatusPanel.vue';
+import QuickAddModal from '../components/organisms/QuickAddModal/QuickAddModal.vue';
 const vm = getCurrentInstance()!.proxy;
 const { state, load } = useCatalog();
 const cart = useCart();
@@ -47,7 +48,17 @@ function change(key: string, value: string) {
 function clear() {
   void router.push({ path: '/', query: {} }).catch(() => {});
 }
-function quickAdd({ product, variantId }: { product: Product; variantId: string }) {
+const quickProduct = ref<Product | null>(null);
+function quickAdd(product: Product) {
+  const variants = product.variants.filter((variant) => variant.available);
+  if (variants.length === 1) {
+    cart.add(product, variants[0].id);
+    return;
+  }
+  quickProduct.value = product;
+}
+function addQuickVariant(product: Product, variantId: string) {
+  quickProduct.value = null;
   cart.add(product, variantId);
 }
 onMounted(load);
@@ -118,6 +129,12 @@ onMounted(load);
         <span aria-hidden="true">✳</span>
       </p>
     </section>
+    <QuickAddModal
+      :open="!!quickProduct"
+      :product="quickProduct"
+      @close="quickProduct = null"
+      @add="addQuickVariant"
+    />
   </div>
 </template>
 <style scoped>

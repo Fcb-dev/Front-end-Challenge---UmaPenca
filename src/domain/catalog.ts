@@ -23,12 +23,7 @@ export function matchPriceRange(priceCents: number, range: string): boolean {
   return meetsMin && meetsMax;
 }
 
-export function filterProducts(
-  products: Product[],
-  type = '',
-  color = '',
-  price = '',
-): Product[] {
+export function filterProducts(products: Product[], type = '', color = '', price = ''): Product[] {
   return products.filter(
     (p) =>
       (!type || p.type === type) &&

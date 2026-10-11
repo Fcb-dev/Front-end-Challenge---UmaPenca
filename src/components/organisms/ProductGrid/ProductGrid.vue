@@ -3,7 +3,7 @@ import type { Product } from '../../../../shared/catalog';
 import ProductCard from '../../molecules/ProductCard/ProductCard.vue';
 defineProps<{ products: Product[]; loading?: boolean }>();
 defineEmits<{
-  (event: 'quick-add', payload: { product: Product; variantId: string }): void;
+  (event: 'quick-add', product: Product): void;
 }>();
 </script>
 <template>

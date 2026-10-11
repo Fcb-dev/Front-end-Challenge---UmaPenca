@@ -158,3 +158,14 @@ Cada etapa agrupa uma entrega verificável. O commit usa `tipo(escopo): resumo` 
 - A importação do módulo da aplicação passou a usar a extensão `.js` esperada pelo resolvedor ESM no código compilado pela Vercel.
 - Teste de integração passa a importar a mesma entrada publicada e exercitar a rota `/api/health`, cobrindo a inicialização real da Function.
 - Validação local: lint, tipos, testes e build; validação final realizada no domínio de produção após o deploy automático.
+
+## 19 — Modal de seleção rápida no catálogo (`feat(catalog)`)
+
+- Componente `QuickAddModal` na camada de organismos permite escolha de cor e tamanho diretamente na vitrine.
+- Produtos com apenas uma variante disponível são adicionados diretamente à sacola com abertura do drawer.
+- Produtos com múltiplas opções abrem diálogo modal acessível com amostras de cores, grade de tamanhos, preço dinâmico e atalho para a página de detalhes.
+- Diálogo modal nativo com suporte a tecla Escape, bloqueio de rolagem do body, fechamento em clique externo e restauração do foco no card de origem.
+- Adicionadas stories no Storybook e teste unitário cobrindo o bloqueio por variações incompletas e emissão da variante selecionada.
+- Cenário de testes E2E do Playwright atualizado para validar a seleção e adição rápida nos três viewports (desktop, mobile e tablet).
+- Documentação do README e histórico de implementação atualizados para refletir o fluxo da compra rápida.
+- Validação: lint, tipos (`vue-tsc`), 23 testes unitários e de integração aprovados, builds da aplicação e Storybook.

@@ -119,7 +119,7 @@ O catálogo demonstra um modelo por produto, escolhido pela capa. Consulte [as r
 - Produto tem URL direta, seleção obrigatória das variações aplicáveis e imagem/preço da variante.
 - Drawer nativo acessível nas duas páginas, com Escape, foco modal e retorno de foco.
 - Cabeçalho fixo, atalho com rolagem suave para a coleção e botão flutuante de retorno ao topo.
-- Adição rápida no card usa a primeira variante disponível e abre a sacola sem navegar; a prévia de cores expande no hover para revelar as opções.
+- Adição rápida no card adiciona produtos de variante única diretamente ou abre modal acessível para escolha de cor e tamanho sem sair do catálogo; a prévia de cores expande no hover para revelar as opções.
 - Imagens com dimensões explícitas, otimização Imgix e lazy loading abaixo da primeira dobra.
 - Fontes locais; rota de produto carregada separadamente; regras monetárias usam centavos inteiros.
 

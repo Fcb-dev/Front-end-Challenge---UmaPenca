@@ -48,7 +48,8 @@ const selectedSort = computed({
         aria-controls="filter-controls"
         @click="expanded = !expanded"
       >
-        <AppIcon name="filter" :size="18" /> Filtrar {{ type || color || price || sort ? '(ativo)' : '' }}
+        <AppIcon name="filter" :size="18" /> Filtrar
+        {{ type || color || price || sort ? '(ativo)' : '' }}
       </button>
     </div>
     <div id="filter-controls" class="filter-controls" :class="{ expanded }">

@@ -7,19 +7,14 @@ import { money } from '../../../domain/catalog';
 const props = defineProps<{ product: Product; eager?: boolean }>();
 const hasHovered = ref(false);
 const emit = defineEmits<{
-  (event: 'quick-add', payload: { product: Product; variantId: string }): void;
+  (event: 'quick-add', product: Product): void;
 }>();
 const colors = computed(() =>
   Array.from(new Map(props.product.variants.map((v) => [v.color, v])).values()),
 );
 const quickVariant = computed(() => props.product.variants.find((variant) => variant.available));
-const quickVariantLabel = computed(() => {
-  if (!quickVariant.value) return '';
-  return [quickVariant.value.color, quickVariant.value.size].filter(Boolean).join(' · ');
-});
 function quickAdd() {
-  if (quickVariant.value)
-    emit('quick-add', { product: props.product, variantId: quickVariant.value.id });
+  if (quickVariant.value) emit('quick-add', props.product);
 }
 </script>
 <template>
@@ -31,7 +26,7 @@ function quickAdd() {
     <div class="product-card-surface">
       <div class="product-image-area">
         <router-link :to="'/produto/' + product.id" :aria-label="'Ver ' + product.name">
-        <ProductImage :src="product.image" :alt="product.name" :eager="eager" />
+          <ProductImage :src="product.image" :alt="product.name" :eager="eager" />
         </router-link>
         <span class="card-type">{{ product.type }}</span>
         <button
@@ -39,9 +34,7 @@ function quickAdd() {
           type="button"
           :disabled="!quickVariant"
           :aria-label="
-            quickVariant
-              ? `Adicionar ${product.name}, ${quickVariantLabel}, à sacola`
-              : `${product.name} indisponível`
+            quickVariant ? `Escolher opções de ${product.name}` : `${product.name} indisponível`
           "
           @click="quickAdd"
         >

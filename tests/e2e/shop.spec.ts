@@ -67,7 +67,9 @@ test('cabeçalho permanece no topo durante a rolagem', async ({ page }) => {
   await page.evaluate(() => window.scrollTo(0, 900));
   const header = page.locator('.header-shell');
   await expect(header).toHaveCSS('position', 'sticky');
-  expect(await header.evaluate((element) => Math.round(element.getBoundingClientRect().top))).toBe(0);
+  expect(await header.evaluate((element) => Math.round(element.getBoundingClientRect().top))).toBe(
+    0,
+  );
 });
 test('atalho do cabeçalho rola suavemente até a coleção', async ({ page }) => {
   await page.goto('/');
@@ -83,16 +85,14 @@ test('atalho do cabeçalho rola suavemente até a coleção', async ({ page }) =
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
   await expect(page.locator('#collection')).toBeInViewport();
 });
-test('ação rápida adiciona a primeira variação disponível sem sair do catálogo', async ({
-  page,
-}) => {
+test('ação rápida permite escolher a variação sem sair do catálogo', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   const firstProduct = seed.products[0];
   const firstVariant = firstProduct.variants.find((variant) => variant.available)!;
   const card = page.locator('.product-card').first();
   const quickAdd = card.getByRole('button', {
-    name: `Adicionar ${firstProduct.name}, ${firstVariant.color} · ${firstVariant.size}, à sacola`,
+    name: `Escolher opções de ${firstProduct.name}`,
   });
   const supportsHover = await page.evaluate(() => matchMedia('(hover: hover)').matches);
   if (supportsHover) {
@@ -105,12 +105,24 @@ test('ação rápida adiciona a primeira variação disponível sem sair do cat�
   await expect(quickAdd).toHaveCSS('opacity', '1');
   await quickAdd.click();
   await expect(page).toHaveURL(/\/$/);
-  await expect(page.getByRole('dialog')).toBeVisible();
-  await expect(page.getByRole('dialog').locator('article')).toHaveCount(1);
-  await expect(page.getByRole('dialog')).toContainText(firstProduct.name);
+  const selector = page.getByRole('dialog', { name: firstProduct.name });
+  await expect(selector).toBeVisible();
+  expect(await selector.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(
+    true,
+  );
+  if (await page.evaluate(() => matchMedia('(max-width: 640px)').matches))
+    await expect(selector.locator('.quick-image img')).toHaveCSS('object-fit', 'contain');
+  await selector.getByRole('button', { name: firstVariant.color, exact: true }).click();
+  if (firstVariant.size)
+    await selector.getByRole('button', { name: firstVariant.size, exact: true }).click();
+  await selector.getByRole('button', { name: 'Adicionar à sacola', exact: true }).click();
+  const cart = page.getByRole('dialog', { name: 'Sua sacola.' });
+  await expect(cart).toBeVisible();
+  await expect(cart.locator('article')).toHaveCount(1);
+  await expect(cart).toContainText(firstProduct.name);
   await page.getByRole('button', { name: 'Fechar sacola' }).click();
   await page.mouse.move(0, 0);
-  await expect(page.getByRole('dialog')).not.toBeVisible();
+  await expect(cart).not.toBeVisible();
   await expect(quickAdd).toHaveCSS('opacity', supportsHover ? '0' : '1');
   await expect(page.getByText('Nosso olhar')).toHaveCount(0);
 });
@@ -127,10 +139,7 @@ test('prévia de cores expande e revela todas as opções no card', async ({ pag
   await expect(preview.locator('.color-collapsed')).toHaveCSS('opacity', '1');
   await expect(preview.locator('.color-panel')).toHaveCSS('width', '86px');
   await preview.hover();
-  await expect(preview.locator('.color-panel')).toHaveCSS(
-    'width',
-    `${colorCount * 16 + 28}px`,
-  );
+  await expect(preview.locator('.color-panel')).toHaveCSS('width', `${colorCount * 16 + 28}px`);
   await expect(preview.locator('.color-collapsed')).toHaveCSS('opacity', '0');
   await expect(preview.locator('.color-expanded')).toHaveCSS('opacity', '1');
   const expandedLeftInset = await preview.evaluate((element) => {
@@ -146,7 +155,9 @@ test('prévia de cores expande e revela todas as opções no card', async ({ pag
   const compact = page.locator('.product-card').nth(compactIndex).locator('.color-preview');
   const rightInset = await compact.evaluate((element) => {
     const panel = element.querySelector('.color-panel')!.getBoundingClientRect();
-    const lastDot = element.querySelector('.color-collapsed .color-dot:last-of-type')!.getBoundingClientRect();
+    const lastDot = element
+      .querySelector('.color-collapsed .color-dot:last-of-type')!
+      .getBoundingClientRect();
     return Math.round(panel.right - lastDot.right);
   });
   expect(rightInset).toBe(6);

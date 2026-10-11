@@ -18,5 +18,11 @@ export default {
 } as Meta;
 export const Default: StoryObj = {};
 export const Active: StoryObj = {
-  args: { type: 'Camiseta', color: 'Preto', price: 'R$ 80 a R$ 120', sort: 'Menor preço', count: 8 },
+  args: {
+    type: 'Camiseta',
+    color: 'Preto',
+    price: 'R$ 80 a R$ 120',
+    sort: 'Menor preço',
+    count: 8,
+  },
 };
