@@ -72,8 +72,10 @@ test('cabeçalho permanece no topo durante a rolagem', async ({ page }) => {
     .toBe(0);
 });
 test('atalho do cabeçalho rola suavemente até a coleção', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.clock.install({ time: new Date('2026-01-01T12:00:00Z') });
   await page.goto('/');
+  await expect(page.locator('html')).toHaveCSS('scroll-behavior', 'smooth');
   // Aguarda a altura final do catálogo antes de medir a rolagem.
   await expect(page.locator('.product-card')).toHaveCount(seed.products.length);
   await page.evaluate(() => document.fonts.ready);

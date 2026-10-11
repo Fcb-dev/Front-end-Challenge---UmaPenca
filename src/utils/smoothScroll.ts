@@ -9,7 +9,8 @@ export function smoothScrollTo(targetY: number, duration = 700) {
   function step(now: number) {
     const progress = Math.min((now - startedAt) / duration, 1);
     const eased = 1 - Math.pow(1 - progress, 3);
-    window.scrollTo(0, startY + distance * eased);
+    // A interpolação já é feita por frame; não iniciar outra animação via CSS.
+    window.scrollTo({ top: startY + distance * eased, left: 0, behavior: 'instant' });
     if (progress < 1) frame = requestAnimationFrame(step);
     else frame = undefined;
   }
