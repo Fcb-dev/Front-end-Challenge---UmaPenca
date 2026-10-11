@@ -56,7 +56,7 @@ defineEmits<{ (event: 'cart'): void }>();
 .footer {
   background: #22211f;
   color: #f7f3ea;
-  padding: 64px 0 24px;
+  padding: 36px 0 36px;
   margin-top: 80px;
 }
 .footer-source {

@@ -211,6 +211,7 @@ onBeforeUnmount(() => {
   scrollbar-width: thin;
   scrollbar-color: #b42355 #e9e2d7;
   scrollbar-gutter: stable;
+  padding-right: 4px;
 }
 .drawer-content::-webkit-scrollbar {
   width: 8px;

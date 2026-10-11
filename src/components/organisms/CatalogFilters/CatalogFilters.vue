@@ -5,15 +5,19 @@ import FilterSelect from '../../molecules/FilterSelect/FilterSelect.vue';
 const props = defineProps<{
   types: string[];
   colors: string[];
+  prices: string[];
   type: string;
   color: string;
+  price: string;
+  sort?: string;
   count: number;
 }>();
 const emit = defineEmits<{
-  (event: 'change', key: 'tipo' | 'cor', value: string): void;
+  (event: 'change', key: 'tipo' | 'cor' | 'preco' | 'ordem', value: string): void;
   (event: 'clear'): void;
 }>();
 const expanded = ref(false);
+const sortOptions = ['Menor preço', 'Maior preço'];
 // v-model reaplica a seleção quando as opções chegam da API após a URL inicial.
 const selectedType = computed({
   get: () => props.type,
@@ -22,6 +26,14 @@ const selectedType = computed({
 const selectedColor = computed({
   get: () => props.color,
   set: (value: string) => emit('change', 'cor', value),
+});
+const selectedPrice = computed({
+  get: () => props.price,
+  set: (value: string) => emit('change', 'preco', value),
+});
+const selectedSort = computed({
+  get: () => props.sort ?? '',
+  set: (value: string) => emit('change', 'ordem', value),
 });
 </script>
 <template>
@@ -36,7 +48,7 @@ const selectedColor = computed({
         aria-controls="filter-controls"
         @click="expanded = !expanded"
       >
-        <AppIcon name="filter" :size="18" /> Filtrar {{ type || color ? '(ativo)' : '' }}
+        <AppIcon name="filter" :size="18" /> Filtrar {{ type || color || price || sort ? '(ativo)' : '' }}
       </button>
     </div>
     <div id="filter-controls" class="filter-controls" :class="{ expanded }">
@@ -54,8 +66,22 @@ const selectedColor = computed({
         placeholder="Todas as cores"
         :options="colors"
       />
+      <FilterSelect
+        id="filter-price"
+        v-model="selectedPrice"
+        label="Faixa de preço"
+        placeholder="Todos os preços"
+        :options="prices"
+      />
+      <FilterSelect
+        id="filter-sort"
+        v-model="selectedSort"
+        label="Ordenar produtos"
+        placeholder="Ordem padrão"
+        :options="sortOptions"
+      />
       <button
-        v-if="type || color"
+        v-if="type || color || price || sort"
         class="min-h-[44px] text-xs underline underline-offset-4"
         @click="$emit('clear')"
       >
@@ -78,6 +104,7 @@ const selectedColor = computed({
   display: flex;
   gap: 12px;
   align-items: center;
+  flex-wrap: wrap;
 }
 @media (max-width: 767px) {
   .filters {

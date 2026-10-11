@@ -3,7 +3,7 @@ import { computed, getCurrentInstance, onMounted } from 'vue';
 import { useCatalog } from '../composables/useCatalog';
 import { useCart } from '../composables/useCart';
 import type { Product } from '../../shared/catalog';
-import { filterProducts } from '../domain/catalog';
+import { filterProducts, PRICE_RANGES, sortProducts, SORT_OPTIONS } from '../domain/catalog';
 import { router } from '../router';
 import CatalogFilters from '../components/organisms/CatalogFilters/CatalogFilters.vue';
 import ProductGrid from '../components/organisms/ProductGrid/ProductGrid.vue';
@@ -14,17 +14,30 @@ const cart = useCart();
 const query = computed(() => vm.$route.query);
 const type = computed(() => (typeof query.value.tipo === 'string' ? query.value.tipo : ''));
 const color = computed(() => (typeof query.value.cor === 'string' ? query.value.cor : ''));
-const products = computed(() =>
-  filterProducts(
+const rawPrice = computed(() => (typeof query.value.preco === 'string' ? query.value.preco : ''));
+const price = computed(() => {
+  const match = PRICE_RANGES.find((r) => r.id === rawPrice.value || r.label === rawPrice.value);
+  return match ? match.label : rawPrice.value;
+});
+const rawSort = computed(() => (typeof query.value.ordem === 'string' ? query.value.ordem : ''));
+const sort = computed(() => {
+  const match = SORT_OPTIONS.find((s) => s.id === rawSort.value || s.label === rawSort.value);
+  return match && match.id !== 'padrao' ? match.label : '';
+});
+const products = computed(() => {
+  const filtered = filterProducts(
     [...state.products] as import('../../shared/catalog').Product[],
     type.value,
     color.value,
-  ),
-);
+    price.value,
+  );
+  return sortProducts(filtered, sort.value);
+});
 const types = computed(() => Array.from(new Set(state.products.map((p) => p.type))).sort());
 const colors = computed(() =>
   Array.from(new Set(state.products.flatMap((p) => p.variants.map((v) => v.color)))).sort(),
 );
+const prices = computed(() => PRICE_RANGES.map((r) => r.label));
 function change(key: string, value: string) {
   const next = { ...query.value };
   if (value) next[key] = value;
@@ -70,8 +83,11 @@ onMounted(load);
       <CatalogFilters
         :types="types"
         :colors="colors"
+        :prices="prices"
         :type="type"
         :color="color"
+        :price="price"
+        :sort="sort"
         :count="products.length"
         @change="change"
         @clear="clear"
@@ -87,7 +103,7 @@ onMounted(load);
       <StatusPanel
         v-else-if="state.loaded && !products.length"
         title="Ainda não encontramos essa combinação"
-        message="Experimente outra cor ou tipo de produto. Tem muita ideia boa por aqui."
+        message="Experimente outra cor, tipo de produto ou faixa de preço. Tem muita ideia boa por aqui."
         action="Limpar filtros"
         @action="clear"
       />
