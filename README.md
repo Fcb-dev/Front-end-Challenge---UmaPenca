@@ -96,7 +96,13 @@ O snapshot contém **50 produtos de 9 tipos**, coletados de duas páginas da [vi
 
 A coleta lê o HTML e extrai JSON estruturado sem executar scripts do site. O intervalo mínimo é 1,1 segundo, com até cinco páginas de listagem. O frontend nunca coleta dados em tempo real. Uma falha que impeça uma coleta válida preserva o seed anterior.
 
-Descrição, cores, tamanhos, disponibilidade e preços vêm dos detalhes quando presentes. Enriquecimento determinístico só é aplicado na ausência dos campos e fica marcado em `enrichedFields`. O catálogo demonstra um modelo por produto, escolhido pela capa. Consulte [as regras completas e contratos](docs/data.md).
+Descrição, cores, tamanhos, disponibilidade e preços vêm dos detalhes quando presentes. Na ausência desses dados na fonte, o adapter aplica **enriquecimento determinístico**, devidamente registrado no campo `enrichedFields`:
+
+- **Tamanhos:** vestuário adulto sem tamanho recebe `['P', 'M', 'G', 'GG']`; vestuário infantil recebe `['4', '6', '8', '10', '12']`; itens que não são roupas (canecas, posters, bottons) ficam sem tamanho (`null`).
+- **Cores:** aproveita as amostras de tecidos da fonte; se ausentes, adota a cor determinística `"Única"` com hex `#D7D1C6`.
+- **Descrições:** prioriza o texto individual; caso falte, utiliza o campo `info` do modelo original da peça.
+
+O catálogo demonstra um modelo por produto, escolhido pela capa. Consulte [as regras completas e contratos](docs/data.md).
 
 | Endpoint                | Resposta                        |
 | ----------------------- | ------------------------------- |
