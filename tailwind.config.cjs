@@ -3,7 +3,10 @@ module.exports = {
   theme: {
     extend: {
       colors: { paper: '#F7F3EA', ink: '#22211F', accent: '#B42355' },
-      fontFamily: { sans: ['Inter', 'sans-serif'], display: ['DM Serif Display', 'serif'] },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        display: ['Chocolate Covered Raindrops', 'cursive'],
+      },
     },
   },
   plugins: [],

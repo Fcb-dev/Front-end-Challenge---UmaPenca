@@ -28,9 +28,10 @@ defineEmits<{ (event: 'cart'): void }>();
 .wordmark {
   display: flex;
   align-items: center;
-  font-family: 'DM Serif Display', serif;
-  font-size: 44px;
-  letter-spacing: -2px;
+  font-family: 'Chocolate Covered Raindrops', cursive;
+  font-size: 50px;
+  font-weight: 700;
+  letter-spacing: 0;
   line-height: 1;
 }
 .wordmark > span:first-child {
@@ -63,7 +64,7 @@ defineEmits<{ (event: 'cart'): void }>();
     height: 80px;
   }
   .wordmark {
-    font-size: 37px;
+    font-size: 43px;
   }
 }
 </style>

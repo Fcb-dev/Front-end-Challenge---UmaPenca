@@ -34,7 +34,6 @@
   },
   "homepage": "https://github.com/Fcb-dev/Front-end-Challenge---UmaPenca#readme",
   "dependencies": {
-    "@fontsource/dm-serif-display": "5.2.6",
     "@fontsource/inter": "5.2.6",
     "express": "5.1.0",
     "vue": "2.7.16",

@@ -53,7 +53,7 @@ Não há segredos no projeto. O deploy proposto mantém aplicação e API na mes
 
 - Vue **2.7.16**, Composition API nativa, Vue Router **3.6.5**.
 - TypeScript **5.3.3**, vue-tsc **1.8.27**, Vite **5.4.21**.
-- Tailwind **3.4.17**, Inter e DM Serif Display locais.
+- Tailwind **3.4.17**, Inter e Chocolate Covered Raindrops locais.
 - Storybook **7.6.24**, última linha utilizada com suporte ao Vue 2.
 - Vitest **3.2.6**, Vue Test Utils **1.3.6**, Playwright **1.56.1**.
 - Express **5.1.0**, Cheerio e tsx na coleta/API.
@@ -139,6 +139,10 @@ A configuração em `vercel.json` prepara **um projeto Vercel** com frontend, AP
 - O catálogo inteiro é adequado ao volume limitado; com mais dados, mover filtros/paginação para a API.
 - Vue 2 e parte do ecossistema estão fora de manutenção. `npm audit` ainda aponta alertas na cadeia legada; consultar [a avaliação de dependências](docs/dependencies.md). Não foi usado `audit fix --force`, que migraria requisitos obrigatórios.
 - Com mais tempo: ampliar cenários de acessibilidade com leitores de tela, estabelecer regressão visual e validar a publicação em ambiente real.
+
+## Créditos tipográficos
+
+Chocolate Covered Raindrops foi criada por [Vanessa Bays / By the Butterfly](http://bythebutterfly.com). A fonte é usada neste projeto demonstrativo conforme os termos distribuídos pela autora, disponíveis em `public/fonts/LICENSE.txt`.
 
 ## Histórico de implementação
 

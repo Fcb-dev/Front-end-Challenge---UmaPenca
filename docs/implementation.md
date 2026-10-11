@@ -109,3 +109,9 @@ Cada etapa agrupa uma entrega verificável. O commit usa `tipo(escopo): resumo` 
 - Documentação do Storybook alinhada às decisões atuais de movimento do protótipo.
 - Cursor pixelado autoral em framboesa, contorno ameixa e creme, inspirado na referência enviada; aplicado em dispositivos com mouse, preservando cursores de texto e indisponibilidade.
 - Validação: lint, tipos, 17 testes unitários/integração, 18 cenários E2E e builds da aplicação e Storybook.
+
+## 13 — Tipografia autoral (`feat(brand)`)
+
+- Chocolate Covered Raindrops aplicada à marca, títulos e destaques; Inter preservada em textos longos e controles para legibilidade.
+- Pesos regular e bold servidos localmente, sem dependência de rede.
+- Licença e crédito da autora Vanessa Bays incluídos junto aos arquivos da fonte e registrados na documentação.

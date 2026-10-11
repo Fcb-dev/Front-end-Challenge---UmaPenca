@@ -102,7 +102,7 @@ onMounted(load);
   padding: 44px 0 48px;
 }
 .hero-copy h1 {
-  font-family: 'DM Serif Display', serif;
+  font-family: 'Chocolate Covered Raindrops', cursive;
   font-size: clamp(44px, 5.3vw, 76px);
   line-height: 1.05;
   letter-spacing: -2px;
@@ -130,7 +130,7 @@ onMounted(load);
   line-height: 1;
 }
 .hero-note p {
-  font-family: 'DM Serif Display', serif;
+  font-family: 'Chocolate Covered Raindrops', cursive;
   font-size: 32px;
   line-height: 1.2;
   margin: 16px 0 22px;

@@ -1,19 +1,47 @@
 @import '@fontsource/inter/latin-400.css';
 @import '@fontsource/inter/latin-500.css';
 @import '@fontsource/inter/latin-600.css';
-@import '@fontsource/dm-serif-display/latin-400.css';
+@font-face {
+  font-family: 'Chocolate Covered Raindrops';
+  src: url('/fonts/chocolate-covered-raindrops.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Chocolate Covered Raindrops';
+  src: url('/fonts/chocolate-covered-raindrops-bold.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 @media (hover: hover) and (pointer: fine) {
   html,
-  body,
-  a,
-  button,
+  body {
+    cursor: url('/cursor.svg?v=3') 7 5, auto;
+  }
+  a[href],
+  button:not(:disabled),
+  label[for],
+  summary,
+  select,
+  input[type='button'],
+  input[type='submit'],
+  input[type='reset'],
+  input[type='checkbox'],
+  input[type='radio'],
+  input[type='file'],
   [role='button'],
+  [role='link'],
   [role='combobox'],
-  [role='option'] {
-    cursor: url('/cursor-bossa.svg') 3 2, auto !important;
+  [role='option'],
+  [role='menuitem'],
+  [role='tab'],
+  [tabindex]:not([tabindex='-1']) {
+    cursor: url('/pointer.svg?v=3') 13 3, pointer !important;
   }
   input,
   textarea,
@@ -41,6 +69,11 @@
   }
   button:disabled {
     cursor: not-allowed;
+  }
+  h1,
+  h2,
+  h3 {
+    font-weight: 700;
   }
 }
 @layer components {
