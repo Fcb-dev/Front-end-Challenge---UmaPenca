@@ -63,10 +63,10 @@ export function adaptProduct(listing: RecordData, detail: RecordData = {}): Prod
   const variants: ProductVariant[] = variations.map((v) => {
     const color = plainText(v.product_color_name || v.color_name) || 'Única';
     const size = plainText(v.size_name) || null;
-    const variantImage = images.find(
-      (i) =>
-        i.fabric_id === v.fabric_id && (!i.product_model_id || i.product_model_id === model.id),
-    );
+    const variantImage =
+      images.find(
+        (i) => i.fabric_id === v.fabric_id && i.product_model_id === model.id && safeImage(i.url),
+      ) || images.find((i) => i.fabric_id === v.fabric_id && safeImage(i.url));
     return {
       id: String(v.variation_id ?? [id, color, size ?? 'unico'].join('-')),
       color,
@@ -94,7 +94,7 @@ export function adaptProduct(listing: RecordData, detail: RecordData = {}): Prod
     model: plainText(model.name) || type,
     description: description || 'A fonte não disponibilizou uma descrição para este produto.',
     image,
-    images: [image],
+    images: Array.from(new Set([image, ...uniqueVariants.map((v) => v.image)].filter(Boolean))),
     priceCents: Math.min(...uniqueVariants.map((v) => v.priceCents)),
     variants: uniqueVariants,
     sourceUrl: String(listing.full_link),

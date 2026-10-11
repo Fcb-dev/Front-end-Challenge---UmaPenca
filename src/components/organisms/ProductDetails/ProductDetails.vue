@@ -23,7 +23,9 @@ const selected = computed(() =>
   ),
 );
 const image = computed(
-  () => props.product.variants.find((v) => v.color === color.value)?.image || props.product.image,
+  () =>
+    props.product.variants.find((v) => v.color === color.value && v.image)?.image ||
+    props.product.image,
 );
 const available = computed(() => props.product.variants.some((v) => v.available));
 function selectColor(value: string) {

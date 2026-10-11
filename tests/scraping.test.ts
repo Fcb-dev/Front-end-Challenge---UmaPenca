@@ -11,6 +11,37 @@ const raw = {
   type: { name: 'Camiseta' },
 };
 describe('coleta e normalização', () => {
+  it('prefere a foto do modelo à estampa genérica para cada tecido/cor', () => {
+    const p = adaptProduct(
+      { ...raw, img_cover_model: 2 },
+      {
+        models: [{ id: 2, name: 'Regular' }],
+        variations: [10, 11, 12].map((fabricId) => ({
+          variation_id: fabricId,
+          fabric_id: fabricId,
+          product_model_id: 2,
+          product_color_name: `Cor ${fabricId}`,
+          virtual_stock: true,
+        })),
+        images_by_fabric: [
+          { fabric_id: 10, product_model_id: null, url: 'https://example.com/art.png' },
+          { fabric_id: 10, product_model_id: 2, url: 'https://example.com/color-10.jpg' },
+          { fabric_id: 11, product_model_id: null, url: 'https://example.com/color-11.jpg' },
+          { fabric_id: 12, product_model_id: 2, url: 'javascript:invalid' },
+        ],
+      },
+    );
+    expect(p.variants.map((v) => v.image)).toEqual([
+      'https://example.com/color-10.jpg',
+      'https://example.com/color-11.jpg',
+      raw.img_cover,
+    ]);
+    expect(p.images).toEqual([
+      raw.img_cover,
+      'https://example.com/color-10.jpg',
+      'https://example.com/color-11.jpg',
+    ]);
+  });
   it('usa informações reais do modelo quando a descrição individual está ausente', () => {
     const result = adaptProduct(raw, {
       description: null,
