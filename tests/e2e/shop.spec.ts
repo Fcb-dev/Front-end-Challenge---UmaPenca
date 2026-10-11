@@ -94,11 +94,14 @@ test('ação rápida adiciona a primeira variação disponível sem sair do cat�
   const quickAdd = card.getByRole('button', {
     name: `Adicionar ${firstProduct.name}, ${firstVariant.color} · ${firstVariant.size}, à sacola`,
   });
-  await expect(quickAdd).toHaveCSS('opacity', '0');
-  await card.hover();
-  expect(await quickAdd.evaluate((element) => getComputedStyle(element).animationName)).toContain(
-    'quick-add-slide-top',
-  );
+  const supportsHover = await page.evaluate(() => matchMedia('(hover: hover)').matches);
+  if (supportsHover) {
+    await expect(quickAdd).toHaveCSS('opacity', '0');
+    await card.hover();
+    expect(await quickAdd.evaluate((element) => getComputedStyle(element).animationName)).toContain(
+      'quick-add-slide-top',
+    );
+  }
   await expect(quickAdd).toHaveCSS('opacity', '1');
   await quickAdd.click();
   await expect(page).toHaveURL(/\/$/);
@@ -108,7 +111,7 @@ test('ação rápida adiciona a primeira variação disponível sem sair do cat�
   await page.getByRole('button', { name: 'Fechar sacola' }).click();
   await page.mouse.move(0, 0);
   await expect(page.getByRole('dialog')).not.toBeVisible();
-  await expect(quickAdd).toHaveCSS('opacity', '0');
+  await expect(quickAdd).toHaveCSS('opacity', supportsHover ? '0' : '1');
   await expect(page.getByText('Nosso olhar')).toHaveCount(0);
 });
 test('prévia de cores expande e revela todas as opções no card', async ({ page }) => {

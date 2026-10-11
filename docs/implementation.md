@@ -143,3 +143,10 @@ Cada etapa agrupa uma entrega verificável. O commit usa `tipo(escopo): resumo` 
 - Controles com a identidade visual editorial do `FilterSelect`, responsividade com quebra fluida e botão de limpeza integrado.
 - Stories do Storybook atualizadas e testes unitários de catálogo expandidos.
 - Validação: lint, tipos, 20 testes unitários/integração aprovados, build da aplicação e build estático do Storybook.
+
+## 17 — Roteamento da API em produção (`fix(deploy)`)
+
+- Diagnóstico no domínio publicado confirmou `404 NOT_FOUND` em `/api/health` antes de qualquer invocação da Function.
+- Restauradas as reescritas de `/api` e `/api/(.*)` para `api/index.ts`, necessárias para encaminhar as rotas do Express no projeto Vite.
+- Teste de regressão adicionado para impedir que o fallback da SPA volte a substituir ou ignorar as rotas da API.
+- Validação: testes, lint, tipos, builds da aplicação e Storybook; verificação final prevista no domínio de produção após o deploy automático.
