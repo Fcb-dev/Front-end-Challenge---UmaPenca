@@ -14,5 +14,5 @@ export const router = new VueRouter({
   },
 });
 router.afterEach((to) => {
-  document.title = to.name === 'catalog' ? 'Penca — ideias que vestem' : 'Produto — Penca';
+  document.title = to.name === 'catalog' ? 'Bossa — ideias que vestem' : 'Produto — Bossa';
 });

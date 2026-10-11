@@ -21,8 +21,8 @@ defineEmits<{ (event: 'cart'): void }>();
         </div>
         <div class="max-w-sm">
           <p class="text-sm leading-7 text-stone-300">
-            Um encontro entre ideias independentes e coisas do dia a dia. Uma seleção de criadores
-            da Uma Penca, para encontrar o que tem a ver com você.
+            Na Bossa, ideias independentes encontram espaço no dia a dia. Uma seleção de peças de
+            criadores da Uma Penca, para você vestir e levar do seu jeito.
           </p>
           <a
             href="https://umapenca.com/"
@@ -36,7 +36,7 @@ defineEmits<{ (event: 'cart'): void }>();
       <div
         class="container-page mt-12 flex flex-wrap justify-between gap-4 border-t border-white/20 pt-6 text-[10px] text-stone-400"
       >
-        <span>Penca · Projeto demonstrativo do teste técnico</span
+        <span>Bossa · Projeto demonstrativo do teste técnico Uma Penca</span
         ><span>Feito de ideias, do começo ao fim.</span>
       </div>
     </footer>

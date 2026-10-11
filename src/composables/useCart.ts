@@ -11,6 +11,7 @@ import {
 } from '../domain/cart';
 import { fetchCatalog } from '../services/catalog';
 
+// Chave legada mantida para preservar sacolas salvas antes da identidade Bossa.
 export const CART_KEY = 'penca:cart:v1';
 type CartStorage = Pick<Storage, 'getItem' | 'setItem'>;
 export function createCart(storage?: CartStorage) {

@@ -228,13 +228,14 @@ onBeforeUnmount(() => {
 .select-menu-enter-active,
 .select-menu-leave-active {
   transition:
-    opacity 160ms,
-    transform 160ms;
+    opacity 300ms ease,
+    transform 300ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-duration: 300ms !important;
 }
 .select-menu-enter,
 .select-menu-leave-to {
   opacity: 0;
-  transform: translateY(-5px);
+  transform: translateY(-8px);
 }
 @media (max-width: 767px) {
   .filter-select {

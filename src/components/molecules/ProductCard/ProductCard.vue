@@ -20,7 +20,7 @@ const colors = computed(() =>
         <span class="card-type">{{ product.type }}</span>
         <span class="card-arrow" aria-hidden="true">↗</span>
       </div>
-      <div class="pt-4">
+      <div class="px-4 pb-5 pt-4">
         <p class="mb-2 text-[10px] font-semibold uppercase tracking-[.14em] text-stone-600">
           {{ product.creator }}
         </p>
@@ -45,6 +45,27 @@ const colors = computed(() =>
 <style scoped>
 .product-card-link {
   display: block;
+  background: #fcf9f2;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px #38291d0a;
+  transition:
+    transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    box-shadow 600ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-duration: 600ms !important;
+}
+.product-card-link > .relative {
+  overflow: hidden;
+  border-radius: 6px 6px 0 0;
+}
+@media (hover: hover) {
+  .product-card-link:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 30px #38291d1a;
+  }
+}
+.product-card-link:focus-visible {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 30px #38291d1a;
 }
 @media (prefers-reduced-motion: reduce) {
   .card-arrow,
@@ -79,9 +100,6 @@ const colors = computed(() =>
 .product-card-link:hover .card-arrow,
 .product-card-link:focus-visible .card-arrow {
   opacity: 1;
-}
-.product-card-link:hover :deep(img) {
-  transform: scale(1.025);
 }
 .card-title {
   font-size: 14px;

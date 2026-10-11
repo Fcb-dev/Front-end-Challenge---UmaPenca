@@ -38,7 +38,7 @@ onMounted(load);
     <section class="editorial-hero">
       <div class="hero-copy">
         <p class="eyebrow mb-5 text-accent">Uma coleção de boas ideias</p>
-        <h1>Vista suas ideias.<br /><span>Leve sua essência.</span></h1>
+        <h1>Vista suas ideias.<br /><span>Leve sua bossa.</span></h1>
         <p class="hero-description">
           Estampas com voz, objetos com afeto.<br />Descubra peças que dizem um pouco de você.
         </p>

@@ -23,7 +23,7 @@ async function load() {
     const result = await fetchProduct(vm.$route.params.id);
     if (token !== request) return;
     product.value = result;
-    document.title = result.name + ' — Penca';
+    document.title = result.name + ' — Bossa';
   } catch (failure) {
     if (token !== request) return;
     missing.value = failure instanceof ApiError && failure.status === 404;

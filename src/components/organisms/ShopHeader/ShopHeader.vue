@@ -5,8 +5,8 @@ defineEmits<{ (event: 'cart'): void }>();
 </script>
 <template>
   <header class="shop-header container-page">
-    <router-link to="/" class="wordmark" aria-label="Penca, início"
-      >penca<span>.</span><span class="wordmark-star" aria-hidden="true">✳</span></router-link
+    <router-link to="/" class="wordmark" aria-label="Bossa, início"
+      >bossa<span>.</span><span class="wordmark-star" aria-hidden="true">✳</span></router-link
     >
     <nav class="hidden items-center gap-8 text-xs md:flex" aria-label="Principal">
       <router-link to="/">A coleção</router-link><a href="/#manifesto">Nosso olhar</a>

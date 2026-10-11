@@ -99,3 +99,13 @@ Cada etapa agrupa uma entrega verificável. O commit usa `tipo(escopo): resumo` 
 - Mantidos filtros combinados e persistência na URL; exemplos interativos adicionados ao Storybook.
 - Revisão visual na prévia e cobertura de teclado, clique externo e seleção por mouse nos três tamanhos de tela.
 - Validação: lint, tipos, builds da aplicação e Storybook, 17 testes unitários/integração e 18 cenários E2E.
+
+## 12 — Identidade Bossa e refinamentos visuais (`feat(brand)`)
+
+- Nome Bossa no cabeçalho, títulos das páginas, favicon, metadados, pacote e documentação.
+- Texto principal atualizado para “Vista suas ideias. Leve sua bossa.” e manifesto ajustado à marca.
+- Referências à Uma Penca preservadas como origem dos produtos e do teste; chave legada da sacola mantida para não perder itens salvos.
+- Incluídos os ajustes visuais aprovados durante a experimentação: cards flutuantes sem borda, elevação suave de 600 ms sem zoom da imagem e dropdowns com transição de 300 ms.
+- Documentação do Storybook alinhada às decisões atuais de movimento do protótipo.
+- Cursor pixelado autoral em framboesa, contorno ameixa e creme, inspirado na referência enviada; aplicado em dispositivos com mouse, preservando cursores de texto e indisponibilidade.
+- Validação: lint, tipos, 17 testes unitários/integração, 18 cenários E2E e builds da aplicação e Storybook.

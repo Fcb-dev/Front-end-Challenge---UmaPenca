@@ -1,6 +1,6 @@
-# Penca — ideias que vestem
+# Bossa — ideias que vestem
 
-Mini loja do teste técnico Uma Penca: catálogo real coletado por scraping, filtros combináveis, página de produto e sacola lateral persistente. Identidade editorial autoral, responsiva, com Atomic Design e Storybook.
+Bossa é a mini loja do teste técnico Uma Penca: catálogo real coletado por scraping, filtros combináveis, página de produto e sacola lateral persistente. Identidade editorial autoral, responsiva, com Atomic Design e Storybook. **Vista suas ideias. Leve sua bossa.**
 
 ## Rodar em uma máquina limpa
 

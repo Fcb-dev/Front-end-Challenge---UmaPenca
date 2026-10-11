@@ -5,6 +5,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@media (hover: hover) and (pointer: fine) {
+  html,
+  body,
+  a,
+  button,
+  [role='button'],
+  [role='combobox'],
+  [role='option'] {
+    cursor: url('/cursor-bossa.svg') 3 2, auto !important;
+  }
+  input,
+  textarea,
+  [contenteditable='true'] {
+    cursor: text !important;
+  }
+  button:disabled,
+  [aria-disabled='true'] {
+    cursor: not-allowed !important;
+  }
+}
 @layer base {
   body {
     @apply m-0 bg-paper font-sans text-ink antialiased;
