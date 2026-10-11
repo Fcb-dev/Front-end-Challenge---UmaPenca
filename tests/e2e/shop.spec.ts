@@ -72,17 +72,24 @@ test('cabeçalho permanece no topo durante a rolagem', async ({ page }) => {
     .toBe(0);
 });
 test('atalho do cabeçalho rola suavemente até a coleção', async ({ page }) => {
+  await page.clock.install({ time: new Date('2026-01-01T12:00:00Z') });
   await page.goto('/');
+  // Aguarda a altura final do catálogo antes de medir a rolagem.
+  await expect(page.locator('.product-card')).toHaveCount(seed.products.length);
+  await page.evaluate(() => document.fonts.ready);
+  await page.clock.pauseAt(new Date('2026-01-01T13:00:00Z'));
   await page.getByRole('button', { name: 'A coleção', exact: true }).click();
   await expect(page).toHaveURL(/#collection$/);
-  await page.waitForTimeout(150);
+  // Avança os frames da animação sem depender da velocidade do runner.
+  await page.clock.runFor(150);
   const intermediate = await page.evaluate(() => window.scrollY);
   const target = await page
     .locator('#collection')
     .evaluate((element) => (element as HTMLElement).offsetTop - 24);
   expect(intermediate).toBeGreaterThan(0);
   expect(intermediate).toBeLessThan(target);
-  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+  await page.clock.runFor(700);
+  expect(await page.evaluate(() => window.scrollY)).toBeCloseTo(target, 0);
   await expect(page.locator('#collection')).toBeInViewport();
 });
 test('ação rápida permite escolher a variação sem sair do catálogo', async ({ page }) => {
