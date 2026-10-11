@@ -169,3 +169,10 @@ Cada etapa agrupa uma entrega verificável. O commit usa `tipo(escopo): resumo` 
 - Cenário de testes E2E do Playwright atualizado para validar a seleção e adição rápida nos três viewports (desktop, mobile e tablet).
 - Documentação do README e histórico de implementação atualizados para refletir o fluxo da compra rápida.
 - Validação: lint, tipos (`vue-tsc`), 23 testes unitários e de integração aprovados, builds da aplicação e Storybook.
+
+## 20 — Estabilização do teste de cabeçalho fixo no CI (`fix(e2e)`)
+
+- Substituída asserção síncrona imediata por `expect.poll` no teste de fixação do cabeçalho durante a rolagem.
+- O atraso de quadros da rolagem suave nativa (`scroll-behavior: smooth`) no runner Linux do GitHub Actions fazia a asserção ler a posição antes do cabeçalho atingir o topo da viewport no mobile e tablet.
+- Com `expect.poll`, a verificação aguarda de forma resiliente a conclusão do scroll em todos os tamanhos de tela.
+- Validação: lint, checagem de tipos estrita e 23 testes unitários/integração aprovados.

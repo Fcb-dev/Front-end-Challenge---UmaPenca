@@ -67,9 +67,9 @@ test('cabeçalho permanece no topo durante a rolagem', async ({ page }) => {
   await page.evaluate(() => window.scrollTo(0, 900));
   const header = page.locator('.header-shell');
   await expect(header).toHaveCSS('position', 'sticky');
-  expect(await header.evaluate((element) => Math.round(element.getBoundingClientRect().top))).toBe(
-    0,
-  );
+  await expect
+    .poll(() => header.evaluate((element) => Math.round(element.getBoundingClientRect().top)))
+    .toBe(0);
 });
 test('atalho do cabeçalho rola suavemente até a coleção', async ({ page }) => {
   await page.goto('/');
