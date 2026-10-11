@@ -10,7 +10,9 @@ export const router = new VueRouter({
     { path: '*', component: () => import('../pages/NotFoundPage.vue') },
   ],
   scrollBehavior(to, from, saved) {
-    return saved ?? (to.path === from.path ? undefined : { x: 0, y: 0 });
+    if (saved) return saved;
+    if (to.hash) return undefined;
+    return to.path === from.path ? undefined : { x: 0, y: 0 };
   },
 });
 router.afterEach((to) => {

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, onMounted } from 'vue';
 import { useCatalog } from '../composables/useCatalog';
+import { useCart } from '../composables/useCart';
+import type { Product } from '../../shared/catalog';
 import { filterProducts } from '../domain/catalog';
 import { router } from '../router';
 import CatalogFilters from '../components/organisms/CatalogFilters/CatalogFilters.vue';
@@ -8,6 +10,7 @@ import ProductGrid from '../components/organisms/ProductGrid/ProductGrid.vue';
 import StatusPanel from '../components/molecules/StatusPanel/StatusPanel.vue';
 const vm = getCurrentInstance()!.proxy;
 const { state, load } = useCatalog();
+const cart = useCart();
 const query = computed(() => vm.$route.query);
 const type = computed(() => (typeof query.value.tipo === 'string' ? query.value.tipo : ''));
 const color = computed(() => (typeof query.value.cor === 'string' ? query.value.cor : ''));
@@ -31,6 +34,9 @@ function change(key: string, value: string) {
 function clear() {
   void router.push({ path: '/', query: {} }).catch(() => {});
 }
+function quickAdd({ product, variantId }: { product: Product; variantId: string }) {
+  cart.add(product, variantId);
+}
 onMounted(load);
 </script>
 <template>
@@ -49,7 +55,7 @@ onMounted(load);
         <span class="hero-note-small">SELEÇÃO INDEPENDENTE / 01</span>
       </div>
     </section>
-    <section aria-labelledby="collection-title">
+    <section id="collection" aria-labelledby="collection-title">
       <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
           <p class="eyebrow mb-2 text-stone-600">Encontre seu próximo favorito</p>
@@ -85,7 +91,12 @@ onMounted(load);
         action="Limpar filtros"
         @action="clear"
       />
-      <ProductGrid v-else :products="products" :loading="state.loading || !state.loaded" />
+      <ProductGrid
+        v-else
+        :products="products"
+        :loading="state.loading || !state.loaded"
+        @quick-add="quickAdd"
+      />
       <p v-if="state.loaded && products.length" class="mt-12 text-center text-xs text-stone-500">
         Você viu todas as {{ products.length }} peças desta seleção.
         <span aria-hidden="true">✳</span>
@@ -101,8 +112,12 @@ onMounted(load);
   gap: 40px;
   padding: 44px 0 48px;
 }
+#collection {
+  scroll-margin-top: 24px;
+}
 .hero-copy h1 {
-  font-family: 'Chocolate Covered Raindrops', cursive;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
   font-size: clamp(44px, 5.3vw, 76px);
   line-height: 1.05;
   letter-spacing: -2px;
@@ -130,7 +145,8 @@ onMounted(load);
   line-height: 1;
 }
 .hero-note p {
-  font-family: 'Chocolate Covered Raindrops', cursive;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
   font-size: 32px;
   line-height: 1.2;
   margin: 16px 0 22px;

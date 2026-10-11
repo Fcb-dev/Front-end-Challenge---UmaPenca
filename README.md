@@ -53,7 +53,7 @@ Não há segredos no projeto. O deploy proposto mantém aplicação e API na mes
 
 - Vue **2.7.16**, Composition API nativa, Vue Router **3.6.5**.
 - TypeScript **5.3.3**, vue-tsc **1.8.27**, Vite **5.4.21**.
-- Tailwind **3.4.17**, Inter e Chocolate Covered Raindrops locais.
+- Tailwind **3.4.17**, Inter e Nunito locais, servidas por `@fontsource`.
 - Storybook **7.6.24**, última linha utilizada com suporte ao Vue 2.
 - Vitest **3.2.6**, Vue Test Utils **1.3.6**, Playwright **1.56.1**.
 - Express **5.1.0**, Cheerio e tsx na coleta/API.
@@ -108,6 +108,8 @@ Descrição, cores, tamanhos, disponibilidade e preços vêm dos detalhes quando
 - Loading, erro com tentativa, vazio, produto ausente e imagem indisponível têm tratamentos próprios.
 - Produto tem URL direta, seleção obrigatória das variações aplicáveis e imagem/preço da variante.
 - Drawer nativo acessível nas duas páginas, com Escape, foco modal e retorno de foco.
+- Cabeçalho fixo, atalho com rolagem suave para a coleção e botão flutuante de retorno ao topo.
+- Adição rápida no card usa a primeira variante disponível e abre a sacola sem navegar; a prévia de cores expande no hover para revelar as opções.
 - Imagens com dimensões explícitas, otimização Imgix e lazy loading abaixo da primeira dobra.
 - Fontes locais; rota de produto carregada separadamente; regras monetárias usam centavos inteiros.
 
@@ -142,7 +144,7 @@ A configuração em `vercel.json` prepara **um projeto Vercel** com frontend, AP
 
 ## Créditos tipográficos
 
-Chocolate Covered Raindrops foi criada por [Vanessa Bays / By the Butterfly](http://bythebutterfly.com). A fonte é usada neste projeto demonstrativo conforme os termos distribuídos pela autora, disponíveis em `public/fonts/LICENSE.txt`.
+A interface utiliza a família Nunito, disponibilizada localmente pelo pacote `@fontsource/nunito`.
 
 ## Histórico de implementação
 

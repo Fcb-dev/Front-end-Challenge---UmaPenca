@@ -6,6 +6,7 @@ export default {
   component: ProductCard,
   tags: ['autodocs'],
   args: { product },
+  argTypes: { quickAdd: { action: 'quick-add' } },
   decorators: [() => ({ template: '<div style="max-width:280px"><story /></div>' })],
 } as Meta;
 export const Default: StoryObj = {};

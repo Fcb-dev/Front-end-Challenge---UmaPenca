@@ -50,6 +50,104 @@ test('dropdown permite seleção por teclado e fecha com Escape e clique externo
   await page.getByRole('heading', { name: 'A coleção.', exact: true }).click();
   await expect(type).toHaveAttribute('aria-expanded', 'false');
 });
+test('botão flutuante retorna ao topo da página', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  const backToTop = page.getByRole('button', { name: 'Voltar ao topo' });
+  await expect(backToTop).toBeVisible();
+  await backToTop.click();
+  await page.waitForTimeout(150);
+  const intermediate = await page.evaluate(() => window.scrollY);
+  expect(intermediate).toBeGreaterThan(0);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+  await expect(backToTop).not.toBeVisible();
+});
+test('cabeçalho permanece no topo durante a rolagem', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => window.scrollTo(0, 900));
+  const header = page.locator('.header-shell');
+  await expect(header).toHaveCSS('position', 'sticky');
+  expect(await header.evaluate((element) => Math.round(element.getBoundingClientRect().top))).toBe(0);
+});
+test('atalho do cabeçalho rola suavemente até a coleção', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'A coleção', exact: true }).click();
+  await expect(page).toHaveURL(/#collection$/);
+  await page.waitForTimeout(150);
+  const intermediate = await page.evaluate(() => window.scrollY);
+  const target = await page
+    .locator('#collection')
+    .evaluate((element) => (element as HTMLElement).offsetTop - 24);
+  expect(intermediate).toBeGreaterThan(0);
+  expect(intermediate).toBeLessThan(target);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+  await expect(page.locator('#collection')).toBeInViewport();
+});
+test('ação rápida adiciona a primeira variação disponível sem sair do catálogo', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  const firstProduct = seed.products[0];
+  const firstVariant = firstProduct.variants.find((variant) => variant.available)!;
+  const card = page.locator('.product-card').first();
+  const quickAdd = card.getByRole('button', {
+    name: `Adicionar ${firstProduct.name}, ${firstVariant.color} · ${firstVariant.size}, à sacola`,
+  });
+  await expect(quickAdd).toHaveCSS('opacity', '0');
+  await card.hover();
+  expect(await quickAdd.evaluate((element) => getComputedStyle(element).animationName)).toContain(
+    'quick-add-slide-top',
+  );
+  await expect(quickAdd).toHaveCSS('opacity', '1');
+  await quickAdd.click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await expect(page.getByRole('dialog').locator('article')).toHaveCount(1);
+  await expect(page.getByRole('dialog')).toContainText(firstProduct.name);
+  await page.getByRole('button', { name: 'Fechar sacola' }).click();
+  await page.mouse.move(0, 0);
+  await expect(page.getByRole('dialog')).not.toBeVisible();
+  await expect(quickAdd).toHaveCSS('opacity', '0');
+  await expect(page.getByText('Nosso olhar')).toHaveCount(0);
+});
+test('prévia de cores expande e revela todas as opções no card', async ({ page }) => {
+  await page.goto('/');
+  const productIndex = seed.products.findIndex(
+    (product) => new Set(product.variants.map((variant) => variant.color)).size > 4,
+  );
+  const product = seed.products[productIndex];
+  const colorCount = new Set(product.variants.map((variant) => variant.color)).size;
+  const preview = page.locator('.product-card').nth(productIndex).locator('.color-preview');
+  await expect(preview.locator('.color-collapsed .color-dot')).toHaveCount(3);
+  await expect(preview.locator('.color-expanded .color-dot')).toHaveCount(colorCount);
+  await expect(preview.locator('.color-collapsed')).toHaveCSS('opacity', '1');
+  await expect(preview.locator('.color-panel')).toHaveCSS('width', '86px');
+  await preview.hover();
+  await expect(preview.locator('.color-panel')).toHaveCSS(
+    'width',
+    `${colorCount * 16 + 28}px`,
+  );
+  await expect(preview.locator('.color-collapsed')).toHaveCSS('opacity', '0');
+  await expect(preview.locator('.color-expanded')).toHaveCSS('opacity', '1');
+  const expandedLeftInset = await preview.evaluate((element) => {
+    const panel = element.querySelector('.color-panel')!.getBoundingClientRect();
+    const firstDot = element.querySelector('.color-expanded .color-dot')!.getBoundingClientRect();
+    return Math.round(firstDot.left - panel.left);
+  });
+  expect(expandedLeftInset).toBe(6);
+
+  const compactIndex = seed.products.findIndex(
+    (item) => new Set(item.variants.map((variant) => variant.color)).size <= 2,
+  );
+  const compact = page.locator('.product-card').nth(compactIndex).locator('.color-preview');
+  const rightInset = await compact.evaluate((element) => {
+    const panel = element.querySelector('.color-panel')!.getBoundingClientRect();
+    const lastDot = element.querySelector('.color-collapsed .color-dot:last-of-type')!.getBoundingClientRect();
+    return Math.round(panel.right - lastDot.right);
+  });
+  expect(rightInset).toBe(6);
+});
 test('filtros combinam, sobrevivem ao reload e respeitam voltar', async ({ page }, info) => {
   await page.goto('/');
   await expect(page.locator('.product-card')).toHaveCount(seed.products.length);

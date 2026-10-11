@@ -208,6 +208,24 @@ onBeforeUnmount(() => {
   flex: 1;
   overflow-y: auto;
   min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: #b42355 #e9e2d7;
+  scrollbar-gutter: stable;
+}
+.drawer-content::-webkit-scrollbar {
+  width: 8px;
+}
+.drawer-content::-webkit-scrollbar-track {
+  background: #e9e2d7;
+  border-radius: 999px;
+}
+.drawer-content::-webkit-scrollbar-thumb {
+  background: #b42355;
+  border: 2px solid #e9e2d7;
+  border-radius: 999px;
+}
+.drawer-content::-webkit-scrollbar-thumb:hover {
+  background: #8f1944;
 }
 @media (max-width: 480px) {
   .cart-drawer {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BackToTopButton from '../components/atoms/BackToTopButton/BackToTopButton.vue';
 import ShopHeader from '../components/organisms/ShopHeader/ShopHeader.vue';
 defineProps<{ cartCount?: number }>();
 defineEmits<{ (event: 'cart'): void }>();
@@ -9,37 +10,26 @@ defineEmits<{ (event: 'cart'): void }>();
     <div class="top-note">
       PEQUENOS CRIADORES. GRANDES IDEIAS. <span aria-hidden="true">✳</span> ENCONTRE A SUA.
     </div>
-    <ShopHeader :count="cartCount" @cart="$emit('cart')" />
+    <div class="header-shell">
+      <ShopHeader :count="cartCount" @cart="$emit('cart')" />
+    </div>
     <main id="main" tabindex="-1"><slot /></main>
-    <footer id="manifesto" class="footer">
-      <div class="container-page flex flex-col justify-between gap-10 md:flex-row">
-        <div>
-          <p class="eyebrow mb-4">Nosso olhar</p>
-          <p class="max-w-xl font-display text-4xl leading-tight">
-            O que você veste também<br />conta uma história.
-          </p>
-        </div>
-        <div class="max-w-sm">
-          <p class="text-sm leading-7 text-stone-300">
-            Na Bossa, ideias independentes encontram espaço no dia a dia. Uma seleção de peças de
-            criadores da Uma Penca, para você vestir e levar do seu jeito.
-          </p>
+    <footer class="footer">
+      <div class="container-page flex flex-wrap justify-between gap-4 text-[10px] text-stone-400">
+        <span
+          >Bossa · Projeto demonstrativo do teste técnico
           <a
             href="https://umapenca.com/"
             target="_blank"
             rel="noopener noreferrer"
-            class="mt-6 inline-block text-xs underline underline-offset-4"
-            >Conheça a Uma Penca ↗</a
-          >
-        </div>
-      </div>
-      <div
-        class="container-page mt-12 flex flex-wrap justify-between gap-4 border-t border-white/20 pt-6 text-[10px] text-stone-400"
-      >
-        <span>Bossa · Projeto demonstrativo do teste técnico Uma Penca</span
-        ><span>Feito de ideias, do começo ao fim.</span>
+            class="footer-source"
+            >Uma Penca</a
+          ></span
+        >
+        <span>Feito de ideias, do começo ao fim.</span>
       </div>
     </footer>
+    <BackToTopButton />
     <slot name="overlay" />
   </div>
 </template>
@@ -56,11 +46,28 @@ defineEmits<{ (event: 'cart'): void }>();
   padding: 0 12px;
   color: #edaabd;
 }
+.header-shell {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: #f7f3ea;
+  box-shadow: 0 5px 16px #38291d0a;
+}
 .footer {
   background: #22211f;
   color: #f7f3ea;
   padding: 64px 0 24px;
   margin-top: 80px;
+}
+.footer-source {
+  color: #f2c94c;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 180ms ease;
+}
+.footer-source:hover,
+.footer-source:focus-visible {
+  color: #ffe07a;
 }
 .skip-link {
   position: fixed;

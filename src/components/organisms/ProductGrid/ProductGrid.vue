@@ -2,6 +2,9 @@
 import type { Product } from '../../../../shared/catalog';
 import ProductCard from '../../molecules/ProductCard/ProductCard.vue';
 defineProps<{ products: Product[]; loading?: boolean }>();
+defineEmits<{
+  (event: 'quick-add', payload: { product: Product; variantId: string }): void;
+}>();
 </script>
 <template>
   <div>
@@ -19,6 +22,7 @@ defineProps<{ products: Product[]; loading?: boolean }>();
           :key="product.id"
           :product="product"
           :eager="index < 4"
+          @quick-add="$emit('quick-add', $event)"
       /></template>
     </div>
   </div>

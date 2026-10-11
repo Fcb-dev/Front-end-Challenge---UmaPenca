@@ -115,3 +115,13 @@ Cada etapa agrupa uma entrega verificável. O commit usa `tipo(escopo): resumo` 
 - Chocolate Covered Raindrops aplicada à marca, títulos e destaques; Inter preservada em textos longos e controles para legibilidade.
 - Pesos regular e bold servidos localmente, sem dependência de rede.
 - Licença e crédito da autora Vanessa Bays incluídos junto aos arquivos da fonte e registrados na documentação.
+
+## 14 — Refinamento da experiência de catálogo (`feat(ui)`)
+
+- Nunito adotada como tipografia principal, incluindo o peso 900 real nos preços dos produtos.
+- Cabeçalho fixo, rolagem suave para a coleção e botão flutuante de retorno ao topo.
+- Card ganhou adição rápida à sacola com a primeira variante disponível, ícone de sacola, animação de entrada/saída e correção do foco após fechar o drawer.
+- Prévia de cores compacta revela todas as opções no hover ou foco, preservando o contador `+N` como último item e alinhando paletas curtas à direita.
+- Sacola recebeu scrollbar em framboesa e o rodapé foi simplificado, com link da Uma Penca em amarelo.
+- Storybook atualizado para o novo botão de retorno ao topo e documentação do README alinhada à experiência final.
+- Validação: lint, tipos, build do Storybook e cenários E2E para rolagem, adição rápida, expansão de cores e cabeçalho fixo.

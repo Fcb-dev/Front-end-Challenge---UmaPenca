@@ -1,15 +1,29 @@
 <script setup lang="ts">
+import { nextTick } from 'vue';
+import { router } from '../../../router';
+import { smoothScrollTo } from '../../../utils/smoothScroll';
 import AppIcon from '../../atoms/AppIcon/AppIcon.vue';
 withDefaults(defineProps<{ count?: number }>(), { count: 0 });
 defineEmits<{ (event: 'cart'): void }>();
+
+async function goToCollection() {
+  if (router.currentRoute.path !== '/') {
+    await router.push({ path: '/', hash: '#collection' }).catch(() => {});
+    await nextTick();
+  } else if (router.currentRoute.hash !== '#collection') {
+    window.history.pushState({}, '', '/#collection');
+  }
+  const collection = document.querySelector<HTMLElement>('#collection');
+  if (collection) smoothScrollTo(collection.offsetTop - 24);
+}
 </script>
 <template>
   <header class="shop-header container-page">
     <router-link to="/" class="wordmark" aria-label="Bossa, início"
       >bossa<span>.</span><span class="wordmark-star" aria-hidden="true">✳</span></router-link
     >
-    <nav class="hidden items-center gap-8 text-xs md:flex" aria-label="Principal">
-      <router-link to="/">A coleção</router-link><a href="/#manifesto">Nosso olhar</a>
+    <nav class="flex items-center gap-3 text-xs sm:gap-8" aria-label="Principal">
+      <button type="button" class="collection-link" @click="goToCollection">A coleção</button>
     </nav>
     <button class="bag-button" aria-label="Abrir sacola" @click="$emit('cart')">
       <AppIcon name="bag" /><span class="hidden sm:inline">Sua sacola</span
@@ -28,10 +42,10 @@ defineEmits<{ (event: 'cart'): void }>();
 .wordmark {
   display: flex;
   align-items: center;
-  font-family: 'Chocolate Covered Raindrops', cursive;
-  font-size: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 46px;
   font-weight: 700;
-  letter-spacing: 0;
+  letter-spacing: -2px;
   line-height: 1;
 }
 .wordmark > span:first-child {
@@ -50,6 +64,9 @@ defineEmits<{ (event: 'cart'): void }>();
   min-height: 44px;
   font-size: 12px;
 }
+.collection-link {
+  min-height: 44px;
+}
 .bag-count {
   display: grid;
   place-items: center;
@@ -64,7 +81,7 @@ defineEmits<{ (event: 'cart'): void }>();
     height: 80px;
   }
   .wordmark {
-    font-size: 43px;
+    font-size: 39px;
   }
 }
 </style>

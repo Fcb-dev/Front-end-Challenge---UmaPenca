@@ -1,27 +1,23 @@
 @import '@fontsource/inter/latin-400.css';
 @import '@fontsource/inter/latin-500.css';
 @import '@fontsource/inter/latin-600.css';
-@font-face {
-  font-family: 'Chocolate Covered Raindrops';
-  src: url('/fonts/chocolate-covered-raindrops.ttf') format('truetype');
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Chocolate Covered Raindrops';
-  src: url('/fonts/chocolate-covered-raindrops-bold.ttf') format('truetype');
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-}
+@import '@fontsource/nunito/latin-400.css';
+@import '@fontsource/nunito/latin-500.css';
+@import '@fontsource/nunito/latin-600.css';
+@import '@fontsource/nunito/latin-700.css';
+@import '@fontsource/nunito/latin-900.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+html {
+  scroll-behavior: smooth;
+}
 @media (hover: hover) and (pointer: fine) {
   html,
   body {
-    cursor: url('/cursor.svg?v=3') 7 5, auto;
+    cursor:
+      url('/cursor.svg?v=3') 7 5,
+      auto;
   }
   a[href],
   button:not(:disabled),
@@ -41,7 +37,9 @@
   [role='menuitem'],
   [role='tab'],
   [tabindex]:not([tabindex='-1']) {
-    cursor: url('/pointer.svg?v=3') 13 3, pointer !important;
+    cursor:
+      url('/pointer.svg?v=3') 13 3,
+      pointer !important;
   }
   input,
   textarea,
@@ -90,6 +88,5 @@
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
 }
