@@ -150,3 +150,10 @@ Cada etapa agrupa uma entrega verificável. O commit usa `tipo(escopo): resumo` 
 - Restauradas as reescritas de `/api` e `/api/(.*)` para `api/index.ts`, necessárias para encaminhar as rotas do Express no projeto Vite.
 - Teste de regressão adicionado para impedir que o fallback da SPA volte a substituir ou ignorar as rotas da API.
 - Validação: testes, lint, tipos, builds da aplicação e Storybook; verificação final prevista no domínio de produção após o deploy automático.
+
+## 18 — Compatibilidade ESM da Function (`fix(deploy)`)
+
+- Logs de runtime da Vercel identificaram `ERR_IMPORT_ATTRIBUTE_MISSING` ao carregar o catálogo JSON no Node.js.
+- O seed da Function passou a declarar explicitamente o atributo ESM `type: json`, mantendo a inclusão estática do arquivo no bundle serverless.
+- Teste de integração passa a importar a mesma entrada publicada e exercitar a rota `/api/health`, cobrindo a inicialização real da Function.
+- Validação local: lint, tipos, testes e build; validação final realizada no domínio de produção após o deploy automático.
