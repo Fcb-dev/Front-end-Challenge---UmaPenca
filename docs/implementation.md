@@ -155,5 +155,6 @@ Cada etapa agrupa uma entrega verificável. O commit usa `tipo(escopo): resumo` 
 
 - Logs de runtime da Vercel identificaram `ERR_IMPORT_ATTRIBUTE_MISSING` ao carregar o catálogo JSON no Node.js.
 - O seed da Function passou a declarar explicitamente o atributo ESM `type: json`, mantendo a inclusão estática do arquivo no bundle serverless.
+- A importação do módulo da aplicação passou a usar a extensão `.js` esperada pelo resolvedor ESM no código compilado pela Vercel.
 - Teste de integração passa a importar a mesma entrada publicada e exercitar a rota `/api/health`, cobrindo a inicialização real da Function.
 - Validação local: lint, tipos, testes e build; validação final realizada no domínio de produção após o deploy automático.
