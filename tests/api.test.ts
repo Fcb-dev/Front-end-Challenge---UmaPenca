@@ -39,6 +39,15 @@ describe('API própria', () => {
     });
     expect(await (await fetch(base + '/api/products/sample')).json()).toEqual(product);
   });
+  it('responde também sem o prefixo /api para compatibilidade serverless', async () => {
+    expect(await (await fetch(base + '/products')).json()).toMatchObject({
+      products: [product],
+    });
+    expect(await (await fetch(base + '/health')).json()).toMatchObject({
+      status: 'ok',
+      products: 1,
+    });
+  });
   it('retorna 404 JSON para produto e rota ausentes', async () => {
     const response = await fetch(base + '/api/products/missing');
     expect(response.status).toBe(404);

@@ -125,3 +125,21 @@ Cada etapa agrupa uma entrega verificável. O commit usa `tipo(escopo): resumo` 
 - Sacola recebeu scrollbar em framboesa e o rodapé foi simplificado, com link da Uma Penca em amarelo.
 - Storybook atualizado para o novo botão de retorno ao topo e documentação do README alinhada à experiência final.
 - Validação: lint, tipos, build do Storybook e cenários E2E para rolagem, adição rápida, expansão de cores e cabeçalho fixo.
+
+## 15 — Deploy e API Serverless na Vercel (`fix(deploy)`)
+
+- Substituição da convenção Next.js `api/[...path].ts` por `api/index.ts`, compatível com o runtime Node/Vite da Vercel.
+- Importação estática direta do seed JSON (`data/products.json`), eliminando leituras de disco via `process.cwd()` que falhavam em runtime na Lambda.
+- Refatoração do Express em `server/app.ts` utilizando router montado tanto em `/api` quanto na raiz `/` para tolerância a reescritas de URL.
+- Configuração de `rewrites` no `vercel.json` roteando `/api` e `/api/(.*)` diretamente para a função serverless.
+- Links oficiais de publicação (`https://bossa-zeta.vercel.app/`), Storybook e API registrados no README.
+- Validação: testes da API HTTP cobrindo rotas com e sem prefixo, lint, tipos e build da aplicação.
+
+## 16 — Filtro de preço e ordenação do catálogo (`feat(catalog)`)
+
+- Filtro de preço com quatro faixas determinísticas cobrindo todo o seed (`Até R$ 50`, `R$ 50 a R$ 80`, `R$ 80 a R$ 120` e `Acima de R$ 120`).
+- Opção de ordenação por menor preço, maior preço e ordem padrão da curadoria.
+- Combinação de filtros por tipo, cor, preço e ordenação refletida na URL (`tipo`, `cor`, `preco`, `ordem`) e no histórico de navegação.
+- Controles com a identidade visual editorial do `FilterSelect`, responsividade com quebra fluida e botão de limpeza integrado.
+- Stories do Storybook atualizadas e testes unitários de catálogo expandidos.
+- Validação: lint, tipos, 20 testes unitários/integração aprovados, build da aplicação e build estático do Storybook.

@@ -2,6 +2,10 @@
 
 Bossa é a mini loja do teste técnico Uma Penca: catálogo real coletado por scraping, filtros combináveis, página de produto e sacola lateral persistente. Identidade editorial autoral, responsiva, com Atomic Design e Storybook. **Vista suas ideias. Leve sua bossa.**
 
+- **Aplicação publicada:** https://bossa-zeta.vercel.app/
+- **Storybook:** https://bossa-zeta.vercel.app/storybook/
+- **API (Catálogo):** https://bossa-zeta.vercel.app/api/products
+
 ## Rodar em uma máquina limpa
 
 Pré-requisitos: **Node 22** (arquivo `.nvmrc`) ou Node 24 e npm. Não é necessário banco de dados, conta de serviço ou executar scraping para iniciar: o seed já está versionado.
@@ -121,17 +125,20 @@ A CI em `.github/workflows/quality.yml` executa instalação limpa, verificaçõ
 
 ## Deploy
 
-Repositório: [Fcb-dev/Front-end-Challenge---UmaPenca](https://github.com/Fcb-dev/Front-end-Challenge---UmaPenca).
+- **Aplicação:** https://bossa-zeta.vercel.app/
+- **Storybook:** https://bossa-zeta.vercel.app/storybook/
+- **API (Catálogo):** https://bossa-zeta.vercel.app/api/products
+- **API (Saúde):** https://bossa-zeta.vercel.app/api/health
+- **Repositório:** [Fcb-dev/Front-end-Challenge---UmaPenca](https://github.com/Fcb-dev/Front-end-Challenge---UmaPenca)
 
 A configuração em `vercel.json` prepara **um projeto Vercel** com frontend, API própria e Storybook em `/storybook/`. Essa simplificação substitui os três projetos inicialmente propostos, reduzindo configuração, CORS e dependência de múltiplas URLs.
 
 1. Importar o repositório na Vercel com Node 22.
 2. Usar `npm ci`, build `npm run build:deploy` e saída `dist`.
-3. Manter `VITE_API_URL=/api`; a função em `api/[...path].ts` utiliza o mesmo Express e seed.
+3. Manter `VITE_API_URL=/api`; a função em `api/index.ts` utiliza o mesmo Express e seed.
 4. Validar `/api/health`, `/produto/431589`, uma URL filtrada e `/storybook/` no endereço publicado.
-5. Registrar os links públicos aqui após a publicação verificada.
 
-**Status:** aplicação e documentação verificadas localmente; publicação externa ainda depende de vincular a conta/projeto de hospedagem. Não há URL pública de deploy confirmada.
+**Status:** Publicado e verificado na Vercel em https://bossa-zeta.vercel.app/.
 
 ## Limitações e próximos passos
 
