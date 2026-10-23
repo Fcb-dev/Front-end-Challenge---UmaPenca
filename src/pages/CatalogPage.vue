@@ -64,14 +64,13 @@ const quickProduct = ref<Product | null>(null);
 function quickAdd(product: Product) {
   const variants = product.variants.filter((variant) => variant.available);
   if (variants.length === 1) {
-    cart.add(product, variants[0].id);
+    if (!cart.add(product, variants[0].id)) cart.state.open = true;
     return;
   }
   quickProduct.value = product;
 }
 function addQuickVariant(product: Product, variantId: string) {
-  quickProduct.value = null;
-  cart.add(product, variantId);
+  if (cart.add(product, variantId)) quickProduct.value = null;
 }
 </script>
 <template>
@@ -159,6 +158,9 @@ function addQuickVariant(product: Product, variantId: string) {
     <QuickAddModal
       :open="!!quickProduct"
       :product="quickProduct"
+      :busy="cart.state.loading"
+      :error="cart.state.error"
+      @retry="cart.hydrate"
       @close="quickProduct = null"
       @add="addQuickVariant"
     />

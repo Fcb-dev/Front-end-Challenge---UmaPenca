@@ -7,9 +7,15 @@ import BaseButton from '../../atoms/BaseButton/BaseButton.vue';
 import ProductImage from '../../atoms/ProductImage/ProductImage.vue';
 import VariantSelector from '../../molecules/VariantSelector/VariantSelector.vue';
 
-const props = defineProps<{ open: boolean; product: Product | null }>();
+const props = defineProps<{
+  open: boolean;
+  product: Product | null;
+  busy?: boolean;
+  error?: string;
+}>();
 const emit = defineEmits<{
   (event: 'close'): void;
+  (event: 'retry'): void;
   (event: 'add', product: Product, variantId: string): void;
 }>();
 const dialog = ref<HTMLDialogElement | null>(null);
@@ -61,7 +67,8 @@ function outside(event: MouseEvent) {
     close();
 }
 function add() {
-  if (props.product && selected.value) emit('add', props.product, selected.value.id);
+  if (props.product && selected.value && !props.busy && !props.error)
+    emit('add', props.product, selected.value.id);
 }
 
 watch(
@@ -130,7 +137,12 @@ onBeforeUnmount(() => {
           @color="selectColor"
           @size="size = $event"
         />
-        <BaseButton class="mt-5 w-full" :disabled="!selected" @click="add">
+        <p v-if="busy" role="status" class="mt-4 text-sm">Conferindo sua sacola...</p>
+        <div v-else-if="error" role="alert" class="mt-4 text-sm">
+          <p>{{ error }}</p>
+          <BaseButton variant="secondary" @click="$emit('retry')">Tentar novamente</BaseButton>
+        </div>
+        <BaseButton class="mt-5 w-full" :disabled="!selected || busy || !!error" @click="add">
           <AppIcon name="bag" :size="18" />Adicionar à sacola
         </BaseButton>
         <p class="mt-2 text-center text-xs text-stone-600" aria-live="polite">

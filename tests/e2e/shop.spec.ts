@@ -292,3 +292,89 @@ test('scroll carrega o restante sem remover os primeiros 28 produtos', async ({ 
   expect(await cards.first().textContent()).toBe(first);
   await expect(page.getByText(`Você viu todas as ${seed.products.length} peças`)).toBeVisible();
 });
+
+test('sacola preserva produtos de páginas diferentes após recarregar', async ({ page }) => {
+  const lines = [seed.products[0], seed.products[28]].map((product) => ({
+    productId: product.id,
+    variantId: product.variants.find((v) => v.available)!.id,
+    quantity: 1,
+  }));
+  await page.goto('/');
+  await page.evaluate(
+    (lines) => localStorage.setItem('penca:cart:v1', JSON.stringify({ version: 1, lines })),
+    lines,
+  );
+  await page.reload();
+  await page.getByRole('button', { name: 'Abrir sacola', exact: true }).click();
+  await expect(page.locator('.cart-drawer article')).toHaveCount(2);
+  expect(
+    await page.evaluate(() => JSON.parse(localStorage.getItem('penca:cart:v1')!).lines),
+  ).toEqual(lines);
+});
+
+test('voltar dos detalhes restaura os lotes e a posição da coleção', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Carregar mais produtos' }).scrollIntoViewIfNeeded();
+  await expect(page.locator('.product-card')).toHaveCount(seed.products.length);
+  const link = page.locator('.product-card').nth(35).locator('a').first();
+  await link.scrollIntoViewIfNeeded();
+  const position = await page.evaluate(() => window.scrollY);
+  await link.click();
+  await expect(page).toHaveURL(/produto/);
+  await page.goBack();
+  await expect(page.locator('.product-card')).toHaveCount(seed.products.length);
+  await expect
+    .poll(async () => Math.abs((await page.evaluate(() => window.scrollY)) - position))
+    .toBeLessThan(5);
+});
+
+test('atalho da coleção preserva filtros na URL e após recarga', async ({ page }) => {
+  await page.goto('/?tipo=Moletom');
+  await expect(page.locator('.product-card')).toHaveCount(
+    seed.products.filter((p) => p.type === 'Moletom').length,
+  );
+  await page.getByRole('button', { name: 'A coleção', exact: true }).click();
+  await expect(page).toHaveURL(/tipo=Moletom#collection$/);
+  await page.reload();
+  await showFilters(page);
+  await expect(page.getByRole('combobox', { name: 'Tipo de produto', exact: true })).toHaveText(
+    'Moletom',
+  );
+});
+
+test('adição rápida permite recuperar falha na sacola sem perder a seleção', async ({ page }) => {
+  const product = seed.products[0];
+  const variant = product.variants.find((v) => v.available)!;
+  await page.goto('/');
+  await page.evaluate(
+    ({ product, variant }) =>
+      localStorage.setItem(
+        'penca:cart:v1',
+        JSON.stringify({
+          version: 1,
+          lines: [{ productId: product.id, variantId: variant.id, quantity: 1 }],
+        }),
+      ),
+    { product, variant },
+  );
+  await page.route('**/api/products/' + product.id, (route) =>
+    route.fulfill({ status: 503, body: '{}' }),
+  );
+  await page.reload();
+  const card = page.locator('.product-card').first();
+  await card.hover();
+  await card.getByRole('button').click();
+  const modal = page.locator('.quick-modal');
+  await modal.getByRole('button', { name: variant.color, exact: true }).click();
+  if (variant.size) await modal.getByRole('button', { name: variant.size, exact: true }).click();
+  await expect(modal.getByRole('alert')).toBeVisible();
+  const add = modal.getByRole('button', { name: 'Adicionar à sacola', exact: true });
+  await expect(add).toBeDisabled();
+  await page.unroute('**/api/products/' + product.id);
+  await modal.getByRole('button', { name: 'Tentar novamente' }).click();
+  await expect(add).toBeEnabled();
+  await add.click();
+  await expect(modal).not.toBeVisible();
+  await expect(page.locator('.cart-drawer output')).toHaveText('2');
+});

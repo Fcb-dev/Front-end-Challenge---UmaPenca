@@ -1,6 +1,10 @@
 import { reactive, readonly } from 'vue';
-import type { CatalogQuery, Product } from '../../shared/catalog';
+import type { CatalogQuery, CatalogResponse, Product } from '../../shared/catalog';
 import { fetchCatalog } from '../services/catalog';
+
+const cache = new Map<string, CatalogResponse>();
+const queryKey = (query: CatalogQuery) =>
+  JSON.stringify([query.tipo || '', query.cor || '', query.preco || '', query.ordem || '']);
 
 export function useCatalog() {
   const state = reactive({
@@ -29,6 +33,7 @@ export function useCatalog() {
       state.types = data.filters.types;
       state.colors = data.filters.colors;
       state.loaded = true;
+      cache.set(queryKey(query), { ...data, products: [...state.products] });
     } catch {
       if (current === generation)
         state.error = 'Não conseguimos carregar a coleção. Confira sua conexão e tente de novo.';
@@ -44,6 +49,17 @@ export function useCatalog() {
     state.nextOffset = null;
     state.loaded = false;
     state.loading = false;
+    state.error = '';
+    const cached = cache.get(queryKey(query));
+    if (cached) {
+      state.products = [...cached.products];
+      state.total = cached.total;
+      state.nextOffset = cached.nextOffset;
+      state.types = cached.filters.types;
+      state.colors = cached.filters.colors;
+      state.loaded = true;
+      return Promise.resolve();
+    }
     return load();
   }
   return { state: readonly(state), load, reset };

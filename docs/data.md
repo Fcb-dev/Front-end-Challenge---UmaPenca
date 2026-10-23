@@ -19,8 +19,16 @@ Execute `npm run scrape` para duas páginas ou `npm run scrape -- --pages=1`. O 
 
 ## API
 
-- `GET /api/products`: `{ products, collectedAt }`.
+- `GET /api/products`: `{ products, collectedAt, total, nextOffset, filters }`.
 - `GET /api/products/:id`: produto, ou 404 com `{ message }`.
 - `GET /api/health`: estado e quantidade de produtos.
 
 Tipos em `shared/catalog.ts`. A API é de leitura e usa o seed versionado. Uma atualização do snapshot exige executar a coleta e reiniciar/publicar a API. A execução local é independente da disponibilidade do site original, exceto pelas imagens remotas.
+
+### Paginação e filtros
+
+`GET /api/products?offset=0` retorna até 28 produtos. Use `nextOffset` na próxima requisição; `null` indica o fim da seleção. `total` conta todos os resultados filtrados, e `filters` contém `types` e `colors` do catálogo completo. Offsets inválidos retornam HTTP 400.
+
+Os parâmetros `tipo`, `cor`, `preco` e `ordem` são aplicados antes da paginação. Preços aceitam os IDs `ate-50`, `50-80`, `80-120` e `acima-120`; ordenação aceita `padrao`, `menor-preco` e `maior-preco`. Preserve os mesmos filtros ao solicitar o próximo lote.
+
+A sacola consulta os detalhes de cada ID salvo, independentemente da paginação e sem usar o cache de produtos. Somente produtos ausentes (404) ou variantes indisponíveis são removidos; falhas temporárias preservam os dados salvos para nova tentativa.

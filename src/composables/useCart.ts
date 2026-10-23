@@ -9,7 +9,7 @@ import {
   validQuantity,
   type CartLine,
 } from '../domain/cart';
-import { fetchCatalog } from '../services/catalog';
+import { ApiError, fetchProduct } from '../services/catalog';
 
 // Chave legada mantida para preservar sacolas salvas antes da identidade Bossa.
 export const CART_KEY = 'penca:cart:v1';
@@ -47,7 +47,17 @@ export function createCart(storage?: CartStorage) {
     state.loading = true;
     state.error = '';
     try {
-      state.products = (await fetchCatalog()).products;
+      const products = await Promise.all(
+        [...new Set(state.lines.map((line) => line.productId))].map(async (id) => {
+          try {
+            return await fetchProduct(id, true);
+          } catch (error) {
+            if (error instanceof ApiError && error.status === 404) return null;
+            throw error;
+          }
+        }),
+      );
+      state.products = products.filter((product): product is Product => product !== null);
       const valid = resolveCart(state.lines, state.products);
       if (valid.length !== state.lines.length)
         state.notice = 'Alguns itens não estão mais disponíveis e foram removidos da sacola.';
@@ -69,11 +79,12 @@ export function createCart(storage?: CartStorage) {
       state.loading ||
       state.error
     )
-      return;
+      return false;
     state.products = [...state.products.filter((p) => p.id !== product.id), product];
     state.lines = addLine(state.lines, product.id, variantId);
     persist();
     state.open = true;
+    return true;
   }
   function update(key: string, quantity: number) {
     if (!validQuantity(quantity)) return;

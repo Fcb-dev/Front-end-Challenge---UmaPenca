@@ -25,7 +25,7 @@ export async function fetchCatalog(query: CatalogQuery = {}, offset = 0): Promis
   data.products.forEach((product) => knownProducts.set(product.id, product));
   return data;
 }
-export async function fetchProduct(id: string): Promise<Product> {
-  const known = knownProducts.get(id);
+export async function fetchProduct(id: string, fresh = false): Promise<Product> {
+  const known = fresh ? undefined : knownProducts.get(id);
   return known ?? get<Product>('/products/' + encodeURIComponent(id));
 }

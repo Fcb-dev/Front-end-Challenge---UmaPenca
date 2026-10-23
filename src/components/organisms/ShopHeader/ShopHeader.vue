@@ -11,7 +11,9 @@ async function goToCollection() {
     await router.push({ path: '/', hash: '#collection' }).catch(() => {});
     await nextTick();
   } else if (router.currentRoute.hash !== '#collection') {
-    window.history.pushState({}, '', '/#collection');
+    await router
+      .push({ path: '/', query: router.currentRoute.query, hash: '#collection' })
+      .catch(() => {});
   }
   const collection = document.querySelector<HTMLElement>('#collection');
   if (collection) smoothScrollTo(collection.offsetTop - 24);

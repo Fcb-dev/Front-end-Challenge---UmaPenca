@@ -104,17 +104,17 @@ Descrição, cores, tamanhos, disponibilidade e preços vêm dos detalhes quando
 
 O catálogo demonstra um modelo por produto, escolhido pela capa. Consulte [as regras completas e contratos](docs/data.md).
 
-| Endpoint                | Resposta                        |
-| ----------------------- | ------------------------------- |
-| `GET /api/products`     | `{ products, collectedAt }`     |
-| `GET /api/products/:id` | Produto ou 404 JSON             |
-| `GET /api/health`       | Estado e quantidade de produtos |
+| Endpoint                | Resposta                                                |
+| ----------------------- | ------------------------------------------------------- |
+| `GET /api/products`     | `{ products, collectedAt, total, nextOffset, filters }` |
+| `GET /api/products/:id` | Produto ou 404 JSON                                     |
+| `GET /api/health`       | Estado e quantidade de produtos                         |
 
 ## Experiência e decisões
 
 - Paleta creme, carvão e framboesa, inspirada no protagonismo das fotos e amostras de cor da referência, com composição editorial própria.
 - Tipo e cor se combinam por AND e ficam na query string; recarregar e navegar pelo histórico preserva a busca.
-- Catálogo pequeno filtrado localmente após uma requisição, com cache de sessão e deduplicação.
+- Catálogo paginado em lotes de 28, com filtros e ordenação na API. O scroll carrega os próximos lotes; o cache por filtros preserva a listagem ao voltar dos detalhes.
 - Loading, erro com tentativa, vazio, produto ausente e imagem indisponível têm tratamentos próprios.
 - Produto tem URL direta, seleção obrigatória das variações aplicáveis e imagem/preço da variante.
 - Drawer nativo acessível nas duas páginas, com Escape, foco modal e retorno de foco.
@@ -151,7 +151,7 @@ A configuração em `vercel.json` prepara **um projeto Vercel** com frontend, AP
 - Sem autenticação, checkout, pagamentos, frete ou administração: não fazem parte do escopo.
 - O snapshot não representa estoque/preço em tempo real. Imagens dependem do CDN da fonte e têm fallback visual.
 - Apenas um modelo por produto; uma loja real precisaria modelar também mudanças de modelagem, produção e regras comerciais.
-- O catálogo inteiro é adequado ao volume limitado; com mais dados, mover filtros/paginação para a API.
+- A paginação usa offsets sobre o snapshot versionado; mudanças do snapshot durante a navegação exigem recarregar a página.
 - Vue 2 e parte do ecossistema estão fora de manutenção. `npm audit` ainda aponta alertas na cadeia legada; consultar [a avaliação de dependências](docs/dependencies.md). Não foi usado `audit fix --force`, que migraria requisitos obrigatórios.
 - Com mais tempo: ampliar cenários de acessibilidade com leitores de tela, estabelecer regressão visual e validar a publicação em ambiente real.
 

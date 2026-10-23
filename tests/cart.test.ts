@@ -1,8 +1,40 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import * as catalog from '../src/services/catalog';
 import { addLine, lineKey, parseCart, resolveCart, subtotal } from '../src/domain/cart';
 import { createCart, CART_KEY } from '../src/composables/useCart';
 import { product } from '../src/stories/fixtures';
 describe('regras da sacola', () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it('preserva os itens salvos quando a conferência falha temporariamente', async () => {
+    const lines = [{ productId: product.id, variantId: 'preto-p', quantity: 2 }];
+    const storage = { getItem: () => JSON.stringify({ version: 1, lines }), setItem: vi.fn() };
+    vi.spyOn(catalog, 'fetchProduct').mockRejectedValue(new catalog.ApiError(503, 'Indisponível'));
+    const cart = createCart(storage);
+    await cart.hydrate();
+    expect(cart.state.lines).toEqual(lines);
+    expect(storage.setItem).not.toHaveBeenCalled();
+    expect(cart.state.error).not.toBe('');
+    expect(cart.add(product, 'preto-p')).toBe(false);
+  });
+
+  it('remove apenas produtos ausentes e consulta preços sem cache', async () => {
+    const lines = [
+      { productId: product.id, variantId: 'preto-p', quantity: 1 },
+      { productId: 'missing', variantId: 'missing', quantity: 1 },
+    ];
+    const fetch = vi.spyOn(catalog, 'fetchProduct').mockImplementation(async (id) => {
+      if (id === 'missing') throw new catalog.ApiError(404, 'Ausente');
+      return product;
+    });
+    const storage = { getItem: () => JSON.stringify({ version: 1, lines }), setItem: vi.fn() };
+    const cart = createCart(storage);
+    await cart.hydrate();
+    expect(cart.state.lines).toEqual([lines[0]]);
+    expect(fetch).toHaveBeenCalledWith(product.id, true);
+    expect(cart.state.error).toBe('');
+  });
+
   it('soma mesma variante e separa variantes e produtos', () => {
     let lines = addLine([], product.id, 'preto-p');
     lines = addLine(lines, product.id, 'preto-p');
