@@ -87,7 +87,14 @@ test('atalho do cabeçalho rola suavemente até a coleção', async ({ page }) =
   const intermediate = await page.evaluate(() => window.scrollY);
   const target = await page
     .locator('#collection')
-    .evaluate((element) => (element as HTMLElement).offsetTop - 24);
+    .evaluate((element) => {
+      const header = document.querySelector<HTMLElement>('.header-shell');
+      return (
+        (element as HTMLElement).offsetTop -
+        (header?.getBoundingClientRect().height ?? 0) -
+        24
+      );
+    });
   expect(intermediate).toBeGreaterThan(0);
   expect(intermediate).toBeLessThan(target);
   await page.clock.runFor(700);

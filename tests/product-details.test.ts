@@ -50,6 +50,18 @@ describe('seleção de variantes', () => {
     expect(button.attributes('disabled')).toBeDefined();
     wrapper.destroy();
   });
+  it('exibe falha da sacola e permite tentar novamente', async () => {
+    const wrapper = mount(LegacyProductDetails, {
+      propsData: { product, cartError: 'Não foi possível conferir sua sacola.' },
+    });
+    await wrapper.find('button[aria-label="Preto"]').trigger('click');
+    await wrapper.findAll('.size-option').at(1).trigger('click');
+    expect(wrapper.find('.base-button').attributes('disabled')).toBeDefined();
+    expect(wrapper.get('[role="alert"]').text()).toContain('Não foi possível conferir');
+    await wrapper.get('[role="alert"] button').trigger('click');
+    expect(wrapper.emitted('retry')).toHaveLength(1);
+    wrapper.destroy();
+  });
   it('acessório sem tamanho exige somente cor', async () => {
     const wrapper = mount(LegacyProductDetails, {
       propsData: { product: { ...product, variants: [{ ...product.variants[0], size: null }] } },

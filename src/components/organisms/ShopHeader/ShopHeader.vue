@@ -16,7 +16,12 @@ async function goToCollection() {
       .catch(() => {});
   }
   const collection = document.querySelector<HTMLElement>('#collection');
-  if (collection) smoothScrollTo(collection.offsetTop - 24);
+  if (collection) {
+    const header = document.querySelector<HTMLElement>('.header-shell');
+    const headerHeight = header?.getBoundingClientRect().height ?? 0;
+    const target = collection.getBoundingClientRect().top + window.scrollY - headerHeight - 24;
+    smoothScrollTo(Math.max(0, target));
+  }
 }
 </script>
 <template>

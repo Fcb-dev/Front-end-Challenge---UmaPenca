@@ -6,8 +6,8 @@ import AppIcon from '../../atoms/AppIcon/AppIcon.vue';
 import BaseButton from '../../atoms/BaseButton/BaseButton.vue';
 import VariantSelector from '../../molecules/VariantSelector/VariantSelector.vue';
 import { money } from '../../../domain/catalog';
-const props = defineProps<{ product: Product; busy?: boolean }>();
-defineEmits<{ (event: 'add', variantId: string): void }>();
+const props = defineProps<{ product: Product; busy?: boolean; cartError?: string }>();
+defineEmits<{ (event: 'add', variantId: string): void; (event: 'retry'): void }>();
 const color = ref('');
 const size = ref<string | null>(null);
 watch(
@@ -67,7 +67,7 @@ function selectColor(value: string) {
       </div>
       <BaseButton
         class="mt-8 w-full"
-        :disabled="!selected || busy"
+        :disabled="!selected || busy || !!cartError"
         @click="selected && $emit('add', selected.id)"
         ><AppIcon name="bag" :size="19" />{{
           !available ? 'Indisponível nesta seleção' : 'Adicionar à sacola'
@@ -77,11 +77,19 @@ function selectColor(value: string) {
         {{
           busy
             ? 'Conferindo sua sacola...'
+            : cartError
+              ? 'A sacola precisa ser conferida novamente.'
             : selected
               ? 'Sua escolha está pronta para ir com você.'
               : 'Escolha as opções acima para adicionar.'
         }}
       </p>
+      <div v-if="cartError" role="alert" class="mt-4 rounded bg-stone-200 p-3 text-sm">
+        <p>{{ cartError }}</p>
+        <BaseButton class="mt-3" variant="secondary" @click="$emit('retry')"
+          >Tentar novamente</BaseButton
+        >
+      </div>
       <div class="mt-8 border-t border-stone-300 pt-6">
         <h2 class="mb-3 text-xs font-semibold uppercase tracking-wider">Sobre esta peça</h2>
         <p class="whitespace-pre-line text-sm leading-7 text-stone-600">

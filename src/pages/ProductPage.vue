@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getCurrentInstance, ref, watch } from 'vue';
+import { getCurrentInstance, onBeforeUnmount, ref, watch } from 'vue';
 import type { Product } from '../../shared/catalog';
 import { fetchProduct, ApiError } from '../services/catalog';
 import { useCart } from '../composables/useCart';
@@ -35,6 +35,9 @@ async function load() {
   }
 }
 watch(() => vm.$route.params.id, load, { immediate: true });
+onBeforeUnmount(() => {
+  request++;
+});
 </script>
 <template>
   <div class="container-page py-8 md:py-10">
@@ -60,8 +63,10 @@ watch(() => vm.$route.params.id, load, { immediate: true });
       v-else-if="product"
       :key="product.id"
       :product="product"
-      :busy="cart.state.loading || !!cart.state.error"
+      :busy="cart.state.loading"
+      :cart-error="cart.state.error"
       @add="cart.add(product, $event)"
+      @retry="cart.hydrate"
     />
   </div>
 </template>
