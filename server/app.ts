@@ -1,5 +1,6 @@
 import express, { Router } from 'express';
-import type { CatalogSeed } from '../shared/catalog';
+import { CATALOG_PAGE_SIZE, type CatalogSeed } from '../shared/catalog';
+import { filterProducts, sortProducts } from '../src/domain/catalog';
 
 export function createApp(seed: CatalogSeed) {
   const app = express();
@@ -7,9 +8,35 @@ export function createApp(seed: CatalogSeed) {
 
   const router = Router();
   router.get('/health', (_req, res) => res.json({ status: 'ok', products: seed.products.length }));
-  router.get('/products', (_req, res) => {
+  router.get('/products', (req, res) => {
+    const rawOffset = req.query.offset ?? '0';
+    if (
+      typeof rawOffset !== 'string' ||
+      !/^\d+$/.test(rawOffset) ||
+      !Number.isSafeInteger(Number(rawOffset))
+    ) {
+      res.status(400).json({ message: 'Offset inválido.' });
+      return;
+    }
+    const offset = Number(rawOffset);
+    const value = (key: string) =>
+      typeof req.query[key] === 'string' ? (req.query[key] as string) : '';
+    const products = sortProducts(
+      filterProducts(seed.products, value('tipo'), value('cor'), value('preco')),
+      value('ordem'),
+    );
+    const end = offset + CATALOG_PAGE_SIZE;
     res.set('Cache-Control', 'public, max-age=60');
-    res.json({ products: seed.products, collectedAt: seed.collectedAt });
+    res.json({
+      products: products.slice(offset, end),
+      collectedAt: seed.collectedAt,
+      total: products.length,
+      nextOffset: end < products.length ? end : null,
+      filters: {
+        types: [...new Set(seed.products.map((p) => p.type))].sort(),
+        colors: [...new Set(seed.products.flatMap((p) => p.variants.map((v) => v.color)))].sort(),
+      },
+    });
   });
   router.get('/products/:id', (req, res) => {
     const product = seed.products.find((p) => p.id === req.params.id);

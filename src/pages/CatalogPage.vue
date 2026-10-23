@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance, onMounted, ref } from 'vue';
+import { computed, getCurrentInstance, onBeforeUnmount, ref, watch } from 'vue';
 import { useCatalog } from '../composables/useCatalog';
 import { useCart } from '../composables/useCart';
 import type { Product } from '../../shared/catalog';
-import { filterProducts, PRICE_RANGES, sortProducts, SORT_OPTIONS } from '../domain/catalog';
+import { PRICE_RANGES, SORT_OPTIONS } from '../domain/catalog';
 import { router } from '../router';
 import CatalogFilters from '../components/organisms/CatalogFilters/CatalogFilters.vue';
 import ProductGrid from '../components/organisms/ProductGrid/ProductGrid.vue';
 import StatusPanel from '../components/molecules/StatusPanel/StatusPanel.vue';
 import QuickAddModal from '../components/organisms/QuickAddModal/QuickAddModal.vue';
 const vm = getCurrentInstance()!.proxy;
-const { state, load } = useCatalog();
+const { state, load, reset } = useCatalog();
 const cart = useCart();
 const query = computed(() => vm.$route.query);
 const type = computed(() => (typeof query.value.tipo === 'string' ? query.value.tipo : ''));
@@ -25,19 +25,31 @@ const sort = computed(() => {
   const match = SORT_OPTIONS.find((s) => s.id === rawSort.value || s.label === rawSort.value);
   return match && match.id !== 'padrao' ? match.label : '';
 });
-const products = computed(() => {
-  const filtered = filterProducts(
-    [...state.products] as import('../../shared/catalog').Product[],
-    type.value,
-    color.value,
-    price.value,
-  );
-  return sortProducts(filtered, sort.value);
-});
-const types = computed(() => Array.from(new Set(state.products.map((p) => p.type))).sort());
-const colors = computed(() =>
-  Array.from(new Set(state.products.flatMap((p) => p.variants.map((v) => v.color)))).sort(),
+const products = computed(() => [...state.products] as Product[]);
+const types = computed(() => [...state.types]);
+const colors = computed(() => [...state.colors]);
+watch(
+  () => [type.value, color.value, price.value, sort.value],
+  () => {
+    void reset({ tipo: type.value, cor: color.value, preco: price.value, ordem: sort.value });
+  },
+  { immediate: true },
 );
+const sentinel = ref<HTMLElement | null>(null);
+let observer: IntersectionObserver | undefined;
+watch(
+  () => [sentinel.value, state.loading, state.nextOffset, state.error],
+  () => {
+    observer?.disconnect();
+    if (!sentinel.value || state.loading || state.error || state.nextOffset === null) return;
+    observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) void load();
+    });
+    observer.observe(sentinel.value);
+  },
+  { flush: 'post' },
+);
+onBeforeUnmount(() => observer?.disconnect());
 const prices = computed(() => PRICE_RANGES.map((r) => r.label));
 function change(key: string, value: string) {
   const next = { ...query.value };
@@ -61,7 +73,6 @@ function addQuickVariant(product: Product, variantId: string) {
   quickProduct.value = null;
   cart.add(product, variantId);
 }
-onMounted(load);
 </script>
 <template>
   <div class="container-page">
@@ -99,12 +110,12 @@ onMounted(load);
         :color="color"
         :price="price"
         :sort="sort"
-        :count="products.length"
+        :count="state.total"
         @change="change"
         @clear="clear"
       />
       <StatusPanel
-        v-if="state.error"
+        v-if="state.error && !state.loaded"
         title="A coleção fez uma pausa"
         :message="state.error"
         action="Tentar novamente"
@@ -118,13 +129,29 @@ onMounted(load);
         action="Limpar filtros"
         @action="clear"
       />
-      <ProductGrid
-        v-else
-        :products="products"
-        :loading="state.loading || !state.loaded"
-        @quick-add="quickAdd"
-      />
-      <p v-if="state.loaded && products.length" class="mt-12 text-center text-xs text-stone-500">
+      <ProductGrid v-else :products="products" :loading="!state.loaded" @quick-add="quickAdd" />
+      <div
+        v-if="state.loaded && state.nextOffset !== null"
+        ref="sentinel"
+        class="mt-12 text-center"
+      >
+        <p v-if="state.loading" role="status">Carregando mais produtos...</p>
+        <StatusPanel
+          v-else-if="state.error"
+          title="Não foi possível carregar mais produtos"
+          :message="state.error"
+          action="Tentar novamente"
+          error
+          @action="load"
+        />
+        <button v-else type="button" class="text-sm underline" @click="load">
+          Carregar mais produtos
+        </button>
+      </div>
+      <p
+        v-if="state.loaded && state.nextOffset === null && products.length"
+        class="mt-12 text-center text-xs text-stone-500"
+      >
         Você viu todas as {{ products.length }} peças desta seleção.
         <span aria-hidden="true">✳</span>
       </p>

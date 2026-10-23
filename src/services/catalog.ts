@@ -1,4 +1,4 @@
-import type { CatalogResponse, Product } from '../../shared/catalog';
+import type { CatalogQuery, CatalogResponse, Product } from '../../shared/catalog';
 const base = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '');
 export class ApiError extends Error {
   constructor(
@@ -17,23 +17,15 @@ async function get<T>(path: string): Promise<T> {
     );
   return response.json() as Promise<T>;
 }
-let cached: CatalogResponse | null = null;
-let pending: Promise<CatalogResponse> | null = null;
-export function fetchCatalog(): Promise<CatalogResponse> {
-  if (cached) return Promise.resolve(cached);
-  if (!pending)
-    pending = get<CatalogResponse>('/products')
-      .then((data) => {
-        if (!Array.isArray(data.products)) throw new Error('Resposta de catálogo inválida.');
-        cached = data;
-        return data;
-      })
-      .finally(() => {
-        pending = null;
-      });
-  return pending;
+const knownProducts = new Map<string, Product>();
+export async function fetchCatalog(query: CatalogQuery = {}, offset = 0): Promise<CatalogResponse> {
+  const params = new URLSearchParams({ ...query, offset: String(offset) });
+  const data = await get<CatalogResponse>('/products?' + params.toString());
+  if (!Array.isArray(data.products)) throw new Error('Resposta de catálogo inválida.');
+  data.products.forEach((product) => knownProducts.set(product.id, product));
+  return data;
 }
 export async function fetchProduct(id: string): Promise<Product> {
-  const known = cached?.products.find((p) => p.id === id);
+  const known = knownProducts.get(id);
   return known ?? get<Product>('/products/' + encodeURIComponent(id));
 }

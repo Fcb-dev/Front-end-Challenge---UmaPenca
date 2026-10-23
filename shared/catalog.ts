@@ -28,7 +28,19 @@ export interface CatalogSeed {
   skipped: { url: string; reason: string }[];
   products: Product[];
 }
+export const CATALOG_PAGE_SIZE = 28;
+
 export interface CatalogResponse {
+  total: number;
+  nextOffset: number | null;
+  filters: { types: string[]; colors: string[] };
   products: Product[];
   collectedAt: string;
+}
+
+export interface CatalogQuery {
+  tipo?: string;
+  cor?: string;
+  preco?: string;
+  ordem?: string;
 }

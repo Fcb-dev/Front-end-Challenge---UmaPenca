@@ -33,7 +33,7 @@ test('dropdown permite seleção por teclado e fecha com Escape e clique externo
   page,
 }) => {
   await page.goto('/');
-  await expect(page.locator('.product-card')).toHaveCount(seed.products.length);
+  await expect(page.locator('.product-card')).toHaveCount(Math.min(28, seed.products.length));
   await showFilters(page);
   const type = page.getByRole('combobox', { name: 'Tipo de produto', exact: true });
   await type.focus();
@@ -77,7 +77,7 @@ test('atalho do cabeçalho rola suavemente até a coleção', async ({ page }) =
   await page.goto('/');
   await expect(page.locator('html')).toHaveCSS('scroll-behavior', 'smooth');
   // Aguarda a altura final do catálogo antes de medir a rolagem.
-  await expect(page.locator('.product-card')).toHaveCount(seed.products.length);
+  await expect(page.locator('.product-card')).toHaveCount(Math.min(28, seed.products.length));
   await page.evaluate(() => document.fonts.ready);
   await page.clock.pauseAt(new Date('2026-01-01T13:00:00Z'));
   await page.getByRole('button', { name: 'A coleção', exact: true }).click();
@@ -173,7 +173,7 @@ test('prévia de cores expande e revela todas as opções no card', async ({ pag
 });
 test('filtros combinam, sobrevivem ao reload e respeitam voltar', async ({ page }, info) => {
   await page.goto('/');
-  await expect(page.locator('.product-card')).toHaveCount(seed.products.length);
+  await expect(page.locator('.product-card')).toHaveCount(Math.min(28, seed.products.length));
   await showFilters(page);
   await page.getByRole('combobox', { name: 'Tipo de produto', exact: true }).click();
   await page.getByRole('option', { name: 'Moletom', exact: true }).click();
@@ -188,11 +188,11 @@ test('filtros combinam, sobrevivem ao reload e respeitam voltar', async ({ page 
   await showFilters(page);
   await expect(page.getByRole('combobox', { name: 'Cor', exact: true })).toHaveText('Areia');
   await page.getByRole('button', { name: 'Limpar filtros' }).click();
-  await expect(page.locator('.product-card')).toHaveCount(seed.products.length);
+  await expect(page.locator('.product-card')).toHaveCount(Math.min(28, seed.products.length));
   await page.goBack();
   await expect(page).toHaveURL(/cor=Areia/);
   await page.goto('/');
-  await expect(page.locator('.product-card')).toHaveCount(seed.products.length);
+  await expect(page.locator('.product-card')).toHaveCount(Math.min(28, seed.products.length));
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({
     path: info.outputPath('catalog.png'),
@@ -253,7 +253,7 @@ test('produto direto, variantes separadas, quantidade, persistência e remoção
 test('erro da API oferece recuperação e filtro sem resultados oferece limpeza', async ({
   page,
 }) => {
-  await page.route('**/api/products', (route) =>
+  await page.route('**/api/products?*', (route) =>
     route.fulfill({
       status: 503,
       contentType: 'application/json',
@@ -262,13 +262,13 @@ test('erro da API oferece recuperação e filtro sem resultados oferece limpeza'
   );
   await page.goto('/');
   await expect(page.getByRole('alert')).toContainText('A coleção fez uma pausa');
-  await page.unroute('**/api/products');
+  await page.unroute('**/api/products?*');
   await page.getByRole('button', { name: 'Tentar novamente' }).click();
-  await expect(page.locator('.product-card')).toHaveCount(seed.products.length);
+  await expect(page.locator('.product-card')).toHaveCount(Math.min(28, seed.products.length));
   await page.goto('/?tipo=tipo-inexistente');
   await expect(page.getByRole('status')).toContainText('Ainda não encontramos');
   await page.getByRole('button', { name: 'Limpar filtros', exact: true }).last().click();
-  await expect(page.locator('.product-card')).toHaveCount(seed.products.length);
+  await expect(page.locator('.product-card')).toHaveCount(Math.min(28, seed.products.length));
 });
 
 test('produto ausente, rota desconhecida e armazenamento corrompido', async ({ page }) => {
@@ -280,4 +280,15 @@ test('produto ausente, rota desconhecida e armazenamento corrompido', async ({ p
   await page.getByRole('link', { name: 'Voltar à coleção' }).click();
   await page.getByRole('button', { name: 'Abrir sacola' }).click();
   await expect(page.getByRole('dialog')).toContainText('Espaço para boas ideias.');
+});
+
+test('scroll carrega o restante sem remover os primeiros 28 produtos', async ({ page }) => {
+  await page.goto('/');
+  const cards = page.locator('.product-card');
+  await expect(cards).toHaveCount(28);
+  const first = await cards.first().textContent();
+  await page.getByRole('button', { name: 'Carregar mais produtos' }).scrollIntoViewIfNeeded();
+  await expect(cards).toHaveCount(seed.products.length);
+  expect(await cards.first().textContent()).toBe(first);
+  await expect(page.getByText(`Você viu todas as ${seed.products.length} peças`)).toBeVisible();
 });

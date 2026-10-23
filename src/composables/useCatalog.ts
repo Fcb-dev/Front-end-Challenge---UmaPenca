@@ -1,20 +1,50 @@
 import { reactive, readonly } from 'vue';
-import type { Product } from '../../shared/catalog';
+import type { CatalogQuery, Product } from '../../shared/catalog';
 import { fetchCatalog } from '../services/catalog';
-const state = reactive({ products: [] as Product[], loading: false, loaded: false, error: '' });
+
 export function useCatalog() {
+  const state = reactive({
+    products: [] as Product[],
+    loading: false,
+    loaded: false,
+    error: '',
+    total: 0,
+    nextOffset: null as number | null,
+    types: [] as string[],
+    colors: [] as string[],
+  });
+  let query: CatalogQuery = {};
+  let generation = 0;
   async function load() {
-    if (state.loaded || state.loading) return;
+    if (state.loading || (state.loaded && state.nextOffset === null)) return;
+    const current = generation;
     state.loading = true;
     state.error = '';
     try {
-      state.products = (await fetchCatalog()).products;
+      const data = await fetchCatalog(query, state.nextOffset ?? 0);
+      if (current !== generation) return;
+      state.products.push(...data.products);
+      state.total = data.total;
+      state.nextOffset = data.nextOffset;
+      state.types = data.filters.types;
+      state.colors = data.filters.colors;
       state.loaded = true;
     } catch {
-      state.error = 'Não conseguimos carregar a coleção. Confira sua conexão e tente de novo.';
+      if (current === generation)
+        state.error = 'Não conseguimos carregar a coleção. Confira sua conexão e tente de novo.';
     } finally {
-      state.loading = false;
+      if (current === generation) state.loading = false;
     }
   }
-  return { state: readonly(state), load };
+  function reset(nextQuery: CatalogQuery) {
+    generation++;
+    query = { ...nextQuery };
+    state.products = [];
+    state.total = 0;
+    state.nextOffset = null;
+    state.loaded = false;
+    state.loading = false;
+    return load();
+  }
+  return { state: readonly(state), load, reset };
 }
