@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
-import { CATALOG_PAGE_SIZE, type CatalogSeed } from '../shared/catalog';
-import { filterProducts, sortProducts } from '../src/domain/catalog';
+import { CATALOG_PAGE_SIZE, type CatalogSeed } from '../shared/catalog.js';
+import { filterProducts, sortProducts } from '../src/domain/catalog.js';
 
 export function createApp(seed: CatalogSeed) {
   const app = express();
